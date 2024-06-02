@@ -12,17 +12,26 @@ class UserService {
   async getOne(userId) {
     if (!userId) throw new Error("id not provided");
     const user = await User.findById(userId);
-    return user;
+    if (user) {
+      return user;
+    } else throw new Error("user not found");
   }
   async update(userId, user) {
     if (!userId) throw new Error("id not provided");
-    const updatedUser = await User.findOneAndUpdate({ _id: userId }, user);
-    return updatedUser;
+    const updatedUser = await User.findOneAndUpdate({ _id: userId }, user, {
+      new: true,
+      runValidators: true,
+    });
+    if (updatedUser) {
+      return updatedUser;
+    } else throw new Error("user not found");
   }
   async delete(userId) {
     if (!userId) throw new Error("id not provided");
     const deletedUser = User.findOneAndDelete({ _id: userId });
-    return deletedUser;
+    if (deletedUser) {
+      return deletedUser;
+    } else throw new Error("user not found");
   }
 }
 

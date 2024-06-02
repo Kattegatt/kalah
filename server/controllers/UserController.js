@@ -6,7 +6,7 @@ class UserController {
       const user = await UserService.create(req.body);
       res.status(201).json(user);
     } catch (error) {
-      res.status(500).json(error);
+      res.status(500).json(error.message);
     }
   }
   async getAll(req, res) {
@@ -14,14 +14,16 @@ class UserController {
       const users = await UserService.getAll();
       res.json(users);
     } catch (error) {
-      res.status(500).json(error);
+      res.status(500).json(error.message);
     }
   }
   async getOne(req, res) {
     try {
       const user = await UserService.getOne(req.params.id);
+      res.json(user);
     } catch (error) {
-      res.status(500).json(error);
+      console.log(error);
+      res.status(500).json(error.message);
     }
   }
   async update(req, res) {
@@ -29,15 +31,15 @@ class UserController {
       const updatedUser = await UserService.update(req.body._id, req.body);
       res.json(updatedUser);
     } catch (error) {
-      res.status(500).json(error);
+      res.status(500).json(error.message);
     }
   }
   async delete(req, res) {
     try {
-      const deletedUser = await UserService.delete(req.body._id);
+      const deletedUser = await UserService.delete(req.params.id);
       res.json(deletedUser);
     } catch (error) {
-      res.status(500).json(error);
+      res.status(500).json(error.message);
     }
   }
 }
