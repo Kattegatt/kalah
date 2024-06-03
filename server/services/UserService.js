@@ -28,7 +28,7 @@ class UserService {
   }
   async delete(userId) {
     if (!userId) throw new Error("id not provided");
-    const deletedUser = User.findOneAndDelete({ _id: userId });
+    const deletedUser = await User.findOneAndDelete({ _id: userId });
     if (deletedUser) {
       return deletedUser;
     } else throw new Error("user not found");
