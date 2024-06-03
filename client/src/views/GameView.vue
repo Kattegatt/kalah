@@ -1,21 +1,16 @@
 <template>
   <div>
-    <button @click="showRegisterModal = true" class="btn">Register</button>
-    <button @click="showLoginModal = true" class="btn">Login</button>
-    <RegisterModal v-if="showRegisterModal" @close="showRegisterModal = false" />
-    <LoginModal v-if="showLoginModal" @close="showLoginModal = false" />
+    <GameBoard />
   </div>
 </template>
 
 <script>
-import RegisterModal from '../components/RegisterModal.vue'
-import LoginModal from '../components/LoginModal.vue'
+import GameBoard from '../components/GameBoard.vue'
 import { useGameStore } from '../stores/game'
 
 export default {
   components: {
-    RegisterModal,
-    LoginModal
+    GameBoard
   },
   setup() {
     const gameStore = useGameStore()
@@ -23,6 +18,19 @@ export default {
     const resetGame = () => {
       gameStore.resetGame()
     }
+
+    const apiBase = `http://localhost:5000/api`
+    const gameId = '665dc10057bf2e3bb944e976'
+    const gameData = fetch(apiBase + '/games/' + gameId)
+    gameData
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result)
+        gameStore.updateGameState(result)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
 
     return {
       gameState: gameStore.gameState,
