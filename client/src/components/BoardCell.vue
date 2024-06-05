@@ -1,5 +1,5 @@
 <template>
-  <div :class="calcStyle" class="rounded-xl flex items-center justify-center">
+  <div :class="calcStyle" class="rounded-xl flex items-center justify-center" @click="emitClick">
     {{ cellValue }}
   </div>
 </template>
@@ -15,8 +15,12 @@ export default {
   },
   computed: {
     cellValue() {
-      console.log(this.cellData)
       return Object.values(this.cellData)[0]
+    }
+  },
+  methods: {
+    emitClick() {
+      this.$emit('move', this.cell)
     }
   }
 }
@@ -25,6 +29,9 @@ export default {
 <style scoped>
 .small {
   @apply w-16 h-16;
+}
+.small:hover {
+  border: 2px solid white;
 }
 .big {
   @apply w-16 h-36;
