@@ -44,6 +44,17 @@ export default {
       }
       // Registration logic
       this.$emit('close')
+    },
+    sendPostRequest() {
+      const jwtToken = 1234
+      const url = 'http://localhost:5000/users'
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`
+        }
+      })
     }
   }
 }

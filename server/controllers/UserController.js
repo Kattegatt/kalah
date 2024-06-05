@@ -1,11 +1,36 @@
 import UserService from "../services/UserService.js";
+import { validationResult } from "express-validator";
 
 class UserController {
   async create(req, res) {
+    const validationErrors = validationResult(req);
+    if (validationErrors.errors.length) {
+      res.status(400).json({ message: "Validation error", validationErrors });
+      return;
+    }
     try {
       const user = await UserService.create(req.body);
       res.status(201).json(user);
     } catch (error) {
+      console.log(error.message);
+      if (error.message === "user already exists") {
+        res.status(409).json(error.message);
+      } else {
+        res.status(500).json(error.message);
+      }
+    }
+  }
+  async login(req, res) {
+    const validationErrors = validationResult(req);
+    if (validationErrors.errors.length) {
+      res.status(400).json({ message: "Validation error", validationErrors });
+      return;
+    }
+    try {
+      const user = await UserService.login(req.body);
+      res.status(200).json(user);
+    } catch (error) {
+      console.log(error.message);
       res.status(500).json(error.message);
     }
   }
