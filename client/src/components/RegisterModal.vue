@@ -60,16 +60,15 @@ export default {
           body: body
         })
         if (response.ok) {
-          console.log('response OK')
-          const { accessToken, refreshToken } = response
-          localStorage.setItem('dk_kalah_access_token', JSON.stringify(accessToken))
+          const data = await response.json()
+          console.log('register ~  data:', data)
+          const { token, refreshToken } = data
+          localStorage.setItem('dk_kalah_access_token', JSON.stringify(token))
           localStorage.setItem('dk_kalah_refresh_token', JSON.stringify(refreshToken))
           this.$emit('close')
         }
       } catch (error) {
-        alert(error)
-
-        console.log(error)
+        console.log(error.message)
         // this.handleError
       }
     }

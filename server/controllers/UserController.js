@@ -11,13 +11,15 @@ class UserController {
     }
     try {
       const tokens = await UserService.create(req.body);
+      console.log("UserController ~ create ~ tokens:", tokens);
       res.status(201).json(tokens);
     } catch (error) {
       console.log(error.message);
-      if (error.message === "user already exists") {
+      if (error.message === "User already exists") {
+        console.log("UserController ~ create ~ error.message:", error.message);
         res.status(409).json(error.message);
       } else {
-        res.status(500).json(error.message);
+        res.status(500).json({ message: error.message });
       }
     }
   }

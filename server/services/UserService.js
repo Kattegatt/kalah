@@ -13,6 +13,7 @@ class UserService {
     }
     const salt = await bcryptjs.genSalt();
     const hashedPass = await bcryptjs.hash(password, salt);
+
     user = { username, email, password: hashedPass };
     const createdUser = await User.create(user);
 
@@ -22,8 +23,9 @@ class UserService {
       email: createdUser.email,
     };
 
-    const token = jwtService.generateAccessToken(payload);
-    const refreshToken = jwtService.generateRefreshToken(payload);
+    const token = await jwtService.generateAccessToken(payload);
+    console.log("UserService ~ create ~ token:", token);
+    const refreshToken = await jwtService.generateRefreshToken(payload);
 
     return { token, refreshToken };
   }
