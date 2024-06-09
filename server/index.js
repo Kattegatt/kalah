@@ -3,20 +3,32 @@ import cors from "cors";
 import mongoose from "mongoose";
 import http from "http";
 import { Server } from "socket.io";
+import dotenv from "dotenv"; // Добавлено для загрузки переменных окружения
 import userRouter from "./routers/UserRouter.js";
 import gameRouter from "./routers/GameRouter.js";
 
+dotenv.config(); // Инициализация переменных окружения
+
 const DB_URL = `mongodb+srv://admin:${process.env.DB_PASS}@cluster0.vuaacml.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`;
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5050;
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
-app.use("/api", userRouter);
-app.use("/api", gameRouter);
+app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 const server = http.createServer(app);
+
+app.use("/users", userRouter);
+app.use("/games", gameRouter);
+
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -45,7 +57,7 @@ async function startApp() {
   try {
     await mongoose.connect(DB_URL);
     console.log("Mongo connected");
-    app.listen(PORT, () => console.log(`Server started on PORT: ${PORT}`));
+    server.listen(PORT, () => console.log(`Server started on PORT: ${PORT}`));
   } catch (error) {
     console.log(error);
   }

@@ -37,25 +37,43 @@ export default {
     }
   },
   methods: {
-    register() {
+    async register() {
       if (this.password !== this.repeatPassword) {
         alert('Passwords do not match')
         return
       }
-      // Registration logic
-      this.$emit('close')
-    },
-    sendPostRequest() {
-      const jwtToken = 1234
-      const url = 'http://localhost:5000/users'
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwtToken}`
-        }
+
+      const url = 'http://localhost:5050/users'
+
+      const body = JSON.stringify({
+        username: this.username,
+        email: this.email,
+        password: this.password
       })
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: body
+        })
+        if (response.ok) {
+          console.log('response OK')
+          const { accessToken, refreshToken } = response
+          localStorage.setItem('dk_kalah_access_token', JSON.stringify(accessToken))
+          localStorage.setItem('dk_kalah_refresh_token', JSON.stringify(refreshToken))
+          this.$emit('close')
+        }
+      } catch (error) {
+        alert(error)
+
+        console.log(error)
+        // this.handleError
+      }
     }
+    // handleError(error) {}
   }
 }
 </script>

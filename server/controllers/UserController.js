@@ -5,12 +5,13 @@ class UserController {
   async create(req, res) {
     const validationErrors = validationResult(req);
     if (validationErrors.errors.length) {
+      console.log(validationErrors);
       res.status(400).json({ message: "Validation error", validationErrors });
       return;
     }
     try {
-      const user = await UserService.create(req.body);
-      res.status(201).json(user);
+      const tokens = await UserService.create(req.body);
+      res.status(201).json(tokens);
     } catch (error) {
       console.log(error.message);
       if (error.message === "user already exists") {
@@ -27,8 +28,8 @@ class UserController {
       return;
     }
     try {
-      const user = await UserService.login(req.body);
-      res.status(200).json(user);
+      const tokens = await UserService.login(req.body);
+      res.status(200).json(tokens);
     } catch (error) {
       console.log(error.message);
       res.status(500).json(error.message);

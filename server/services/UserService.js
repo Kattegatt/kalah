@@ -15,7 +15,17 @@ class UserService {
     const hashedPass = await bcryptjs.hash(password, salt);
     user = { username, email, password: hashedPass };
     const createdUser = await User.create(user);
-    return createdUser;
+
+    const payload = {
+      _id: createdUser._id,
+      username: createdUser.username,
+      email: createdUser.email,
+    };
+
+    const token = jwtService.generateAccessToken(payload);
+    const refreshToken = jwtService.generateRefreshToken(payload);
+
+    return { token, refreshToken };
   }
   async login(user) {
     const { email, password } = user;
@@ -31,7 +41,8 @@ class UserService {
       email: exist.email,
     };
     const token = jwtService.generateAccessToken(payload);
-    return token;
+    const refreshToken = jwtService.generateRefreshToken(payload);
+    return { token, refreshToken };
   }
   async getAll() {
     const users = await User.find();
