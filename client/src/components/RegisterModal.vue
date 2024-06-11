@@ -61,7 +61,6 @@ export default {
         })
         if (response.ok) {
           const data = await response.json()
-          console.log('register ~  data:', data)
           const { token, refreshToken } = data
           localStorage.setItem('dk_kalah_access_token', JSON.stringify(token))
           localStorage.setItem('dk_kalah_refresh_token', JSON.stringify(refreshToken))
