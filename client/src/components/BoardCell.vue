@@ -5,25 +5,39 @@
 </template>
 
 <script>
-export default {
-  props: ['cell', 'size', 'type'],
-  data() {
+import { defineComponent, toRefs, computed } from 'vue'
+
+export default defineComponent({
+  props: {
+    cell: {
+      type: Object,
+      required: true
+    },
+    size: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
+    }
+  },
+  setup(props, { emit }) {
+    const { cell, size, type } = toRefs(props)
+    const calcStyle = computed(() => `${size.value} ${type.value}`)
+    const cellValue = computed(() => Object.values(cell.value)[0])
+
+    const emitClick = () => {
+      emit('move', cell.value)
+    }
+
     return {
-      cellData: this.cell,
-      calcStyle: `${this.size} ${this.type}`
-    }
-  },
-  computed: {
-    cellValue() {
-      return Object.values(this.cellData)[0]
-    }
-  },
-  methods: {
-    emitClick() {
-      this.$emit('move', this.cell)
+      calcStyle,
+      cellValue,
+      emitClick
     }
   }
-}
+})
 </script>
 
 <style scoped>
@@ -36,7 +50,6 @@ export default {
 .big {
   @apply w-16 h-36;
 }
-
 .x {
   @apply bg-blue-300;
 }

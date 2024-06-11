@@ -20,7 +20,7 @@
       ></BoardCell>
     </div>
     <BoardCell size="big" type="x" :cell="getMainCellX"></BoardCell>
-    <button @click="resetGame">Reset</button>
+    <button class="btn" @click="resetGame">Reset</button>
   </div>
 </template>
 
@@ -167,15 +167,10 @@ export default {
 
 <style scoped>
 .board-container {
-  @apply flex p-4 gap-4 rounded-md bg-slate-600;
+  @apply flex p-4 gap-4 rounded-lg  bg-slate-600;
 }
-.game-board {
-  @apply grid grid-cols-4 gap-4;
-}
-.cell {
-  @apply p-4 bg-gray-200 rounded;
-}
+
 .btn {
-  @apply bg-blue-500 text-white py-2 px-4 rounded mt-4;
+  @apply bg-white h-12 top-11  text-slate-700 py-2 px-4 rounded-lg mt-4;
 }
 </style>
