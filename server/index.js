@@ -18,7 +18,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -29,29 +29,29 @@ const server = http.createServer(app);
 app.use("/users", userRouter);
 app.use("/games", gameRouter);
 
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST", "PUT"],
-//   },
-// });
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PUT"],
+  },
+});
 
-// io.on("connection", (socket) => {
-//   console.log("New client connected");
+io.on("connection", (socket) => {
+  console.log("New client connected");
 
-//   socket.on("joinGame", (gameId) => {
-//     socket.join(gameId);
-//     io.to(gameId).emit("newPlayer", { playerId: socket.id });
-//   });
+  socket.on("joinGame", (gameId) => {
+    socket.join(gameId);
+    io.to(gameId).emit("newPlayer", { playerId: socket.id });
+  });
 
-//   socket.on("move", (data) => {
-//     io.to(data.gameId).emit("move", data);
-//   });
+  socket.on("move", (data) => {
+    io.to(data.gameId).emit("move", data);
+  });
 
-//   socket.on("disconnect", () => {
-//     console.log("Client disconnected");
-//   });
-// });
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
 
 async function startApp() {
   try {
