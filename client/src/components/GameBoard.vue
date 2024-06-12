@@ -25,23 +25,37 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useGameStore } from '../stores/game'
 import BoardCell from './BoardCell.vue'
-import io from 'socket.io-client'
+import { socket, joinGame } from '@/socket'
 
 export default {
   components: {
     BoardCell
   },
-  emits: ['move'],
   setup() {
+    const gameId = ref('1234')
     const gameStore = useGameStore()
-    const extraTurn = ref(false)
+    const gameState = gameStore.$state.gameState
+    let extraTurn = ref(false)
     // const player = ref('x')
 
+    // watch(socketState.latestState, () => {
+    //   console.log('watch ~ latestState:', socketState.latestState)
+    // })
+
+    joinGame(gameId.value)
+
+    socket.on('returnState', (args) => {
+      console.log('socket.on ~ args:', args)
+      const { newGameState, isExtraTurn } = args
+      extraTurn.value = isExtraTurn
+      updateGameState(newGameState)
+    })
+
     const handleMove = (cellData) => {
-      console.log(cellData)
+      socket.emit('move', { gameState, cellData })
     }
 
     const resetGame = () => {
@@ -52,44 +66,19 @@ export default {
       gameStore.updateGameState(data)
     }
 
-    const getSmallCells = (playerSide) => {
+    const getSmallCells = (side) => {
       return gameStore.gameState.filter(
-        (i) => Object.keys(i)[0].includes(playerSide) && !Object.keys(i)[0].includes('7')
+        (i) => Object.keys(i)[0].includes(side) && !Object.keys(i)[0].includes('7')
       )
     }
 
-    const getMainCell = (playerSide) => {
+    const getMainCell = (side) => {
       return gameStore.gameState.filter(
-        (i) => Object.keys(i)[0].includes(playerSide) && Object.keys(i)[0].includes('7')
+        (i) => Object.keys(i)[0].includes(side) && Object.keys(i)[0].includes('7')
       )[0]
     }
-
-    // const getSmallCellsX = computed(() => {
-    //   return gameStore.gameState.filter(
-    //     (i) => Object.keys(i)[0].includes('x') && !Object.keys(i)[0].includes('7')
-    //   )
-    // })
-
-    // const getMainCellX = computed(() => {
-    //   return gameStore.gameState.filter(
-    //     (i) => Object.keys(i)[0].includes('x') && Object.keys(i)[0].includes('7')
-    //   )[0]
-    // })
-
-    // const getSmallCellsY = computed(() => {
-    //   return gameStore.gameState
-    //     .filter((i) => Object.keys(i)[0].includes('y') && !Object.keys(i)[0].includes('7'))
-    //     .reverse()
-    // })
-
-    // const getMainCellY = computed(() => {
-    //   return gameStore.gameState.filter(
-    //     (i) => Object.keys(i)[0].includes('y') && Object.keys(i)[0].includes('7')
-    //   )[0]
-    // })
-
     return {
-      gameState: gameStore.gameState,
+      gameState,
       resetGame,
       updateGameState,
       handleMove,

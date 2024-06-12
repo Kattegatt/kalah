@@ -2,14 +2,19 @@ import Game from "../models/Game.js";
 
 class GameService {
   async create(game) {
-    const createdGame = await Game.create(game);
-    return createdGame;
+    try {
+      const createdGame = await Game.create(game);
+      return createdGame;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
   async getAll() {
     const games = await Game.find();
     return games;
   }
-  async handleMove(gameState, cellData) {
+  async handleMove(data) {
+    const { gameState, cellData } = data;
     let newGameState = [...gameState];
     const moveCell = Object.keys(cellData)[0];
     let grainCount = Object.values(cellData)[0];
@@ -48,7 +53,11 @@ class GameService {
         if (cellKey == "x7" || cellKey == "y7") {
           extraTurn = true;
         } else {
-          newGameState = this.handleCapture(newGameState, cellKey, storeKey);
+          newGameState = await this.handleCapture(
+            newGameState,
+            cellKey,
+            storeKey
+          );
         }
       }
       i++;
@@ -60,11 +69,12 @@ class GameService {
     const storeInd = state.findIndex((obj) =>
       Object.prototype.hasOwnProperty.call(obj, storeKey)
     );
-    const landedInd = state.findIndex((obj) =>
-      Object.prototype.hasOwnProperty.call(obj, landedCellKey)
+    const landedInd = parseInt(
+      state.findIndex((obj) =>
+        Object.prototype.hasOwnProperty.call(obj, landedCellKey)
+      )
     );
-    const oppositeInd = this.opposites[landedInd];
-    console.log("GameService ~ handleCapture ~ oppositeInd:", oppositeInd);
+    const oppositeInd = this._opposites[landedInd];
 
     if (!oppositeInd) return state;
 
@@ -82,6 +92,7 @@ class GameService {
     }
     return state;
   }
+
   async getAllByUserId(userId) {
     // get all games that user participated in
     if (!userId) throw new Error("id not provided");
@@ -92,6 +103,7 @@ class GameService {
       return games;
     } else throw new Error("games not found");
   }
+
   async getOne(gameId) {
     if (!gameId) throw new Error("id not provided");
     const game = await Game.findById(gameId);
@@ -99,6 +111,7 @@ class GameService {
       return game;
     } else throw new Error("game not found");
   }
+
   async update(gameId, game) {
     if (!gameId) throw new Error("id not provided");
     const updatedGame = await Game.findOneAndUpdate({ _id: gameId }, game, {
@@ -109,6 +122,7 @@ class GameService {
       return updatedGame;
     } else throw new Error("game not found");
   }
+
   async delete(gameId) {
     if (!gameId) throw new Error("id not provided");
     const deletedGame = await Game.findOneAndDelete({ _id: gameId });
@@ -117,7 +131,8 @@ class GameService {
       return deletedGame;
     } else throw new Error("game not found");
   }
-  static opposites = {
+
+  _opposites = {
     0: 12,
     1: 11,
     2: 10,

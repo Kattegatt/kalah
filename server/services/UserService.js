@@ -24,7 +24,6 @@ class UserService {
     };
 
     const token = await jwtService.generateAccessToken(payload);
-    console.log("UserService ~ create ~ token:", token);
     const refreshToken = await jwtService.generateRefreshToken(payload);
 
     return { token, refreshToken };
