@@ -1,9 +1,9 @@
 <template>
   <div class="board-container">
-    <BoardCell size="big" type="y" :cell="getMainCellY"></BoardCell>
+    <BoardCell size="big" type="y" :cell="getMainCell('y')"></BoardCell>
     <div class="grid grid-cols-6 gap-4">
       <BoardCell
-        v-for="cell in getSmallCellsY"
+        v-for="cell in getSmallCells('y').reverse()"
         :key="Object.keys(cell)[0]"
         :cell="cell"
         size="small"
@@ -11,7 +11,7 @@
         @move="handleMove"
       ></BoardCell>
       <BoardCell
-        v-for="cell in getSmallCellsX"
+        v-for="cell in getSmallCells('x')"
         :key="Object.keys(cell)[0]"
         :cell="cell"
         size="small"
@@ -19,7 +19,7 @@
         @move="handleMove"
       ></BoardCell>
     </div>
-    <BoardCell size="big" type="x" :cell="getMainCellX"></BoardCell>
+    <BoardCell size="big" type="x" :cell="getMainCell('x')"></BoardCell>
     <button class="btn" @click="resetGame">Reset</button>
   </div>
 </template>
@@ -40,7 +40,9 @@ export default {
     const extraTurn = ref(false)
     // const player = ref('x')
 
-    const handleMove = () => {}
+    const handleMove = (cellData) => {
+      console.log(cellData)
+    }
 
     const resetGame = () => {
       gameStore.resetGame()
@@ -50,38 +52,49 @@ export default {
       gameStore.updateGameState(data)
     }
 
-    const getSmallCellsX = computed(() => {
+    const getSmallCells = (playerSide) => {
       return gameStore.gameState.filter(
-        (i) => Object.keys(i)[0].includes('x') && !Object.keys(i)[0].includes('7')
+        (i) => Object.keys(i)[0].includes(playerSide) && !Object.keys(i)[0].includes('7')
       )
-    })
+    }
 
-    const getMainCellX = computed(() => {
+    const getMainCell = (playerSide) => {
       return gameStore.gameState.filter(
-        (i) => Object.keys(i)[0].includes('x') && Object.keys(i)[0].includes('7')
+        (i) => Object.keys(i)[0].includes(playerSide) && Object.keys(i)[0].includes('7')
       )[0]
-    })
+    }
 
-    const getSmallCellsY = computed(() => {
-      return gameStore.gameState
-        .filter((i) => Object.keys(i)[0].includes('y') && !Object.keys(i)[0].includes('7'))
-        .reverse()
-    })
+    // const getSmallCellsX = computed(() => {
+    //   return gameStore.gameState.filter(
+    //     (i) => Object.keys(i)[0].includes('x') && !Object.keys(i)[0].includes('7')
+    //   )
+    // })
 
-    const getMainCellY = computed(() => {
-      return gameStore.gameState.filter(
-        (i) => Object.keys(i)[0].includes('y') && Object.keys(i)[0].includes('7')
-      )[0]
-    })
+    // const getMainCellX = computed(() => {
+    //   return gameStore.gameState.filter(
+    //     (i) => Object.keys(i)[0].includes('x') && Object.keys(i)[0].includes('7')
+    //   )[0]
+    // })
+
+    // const getSmallCellsY = computed(() => {
+    //   return gameStore.gameState
+    //     .filter((i) => Object.keys(i)[0].includes('y') && !Object.keys(i)[0].includes('7'))
+    //     .reverse()
+    // })
+
+    // const getMainCellY = computed(() => {
+    //   return gameStore.gameState.filter(
+    //     (i) => Object.keys(i)[0].includes('y') && Object.keys(i)[0].includes('7')
+    //   )[0]
+    // })
 
     return {
       gameState: gameStore.gameState,
       resetGame,
       updateGameState,
-      getSmallCellsX,
-      getMainCellX,
-      getSmallCellsY,
-      getMainCellY,
+      handleMove,
+      getSmallCells,
+      getMainCell,
       extraTurn
     }
   }
