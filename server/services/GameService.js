@@ -79,13 +79,15 @@ class GameService {
     if (!oppositeInd) return state;
 
     const oppositeValue = Object.values(state[oppositeInd])[0];
+    const storeValue = parseInt(Object.values(state[storeInd]));
     const oppositeKey = Object.keys(state[oppositeInd])[0];
     const landedOnEmpty = Object.values(state[landedInd])[0] == 1;
     const landOnPlayersCell =
       landedCellKey[0] == storeKey[0] && landedCellKey != storeKey;
 
     if (landOnPlayersCell && landedOnEmpty && oppositeValue > 0) {
-      const sum = oppositeValue + 1;
+      const sum = oppositeValue + 1 + storeValue;
+      console.log(`GOOOOOOOL~~ sum: ${sum}`);
       state[storeInd] = { [storeKey]: sum };
       state[landedInd] = { [landedCellKey]: 0 };
       state[oppositeInd] = { [oppositeKey]: 0 };

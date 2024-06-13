@@ -18,14 +18,17 @@ socket.on('connect', () => {
   socketState.connected = true
 })
 
-export const joinGame = (gameId) => {
-  socket.emit('joinGame', gameId)
-}
-
 socket.on('disconnect', () => {
   socketState.connected = false
 })
 
+socket.on('newPlayer', ({ playerId }) => {
+  console.log(`Player with id ${playerId} connected joined the game`)
+})
+
+export const joinGame = (gameId) => {
+  socket.emit('joinGame', gameId)
+}
 // socket.on('returnState', (args) => {
 //   console.log('socket.on ~ args:', args)
 //   const { newGameState, extraTurn } = args
