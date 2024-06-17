@@ -1,40 +1,42 @@
 import { defineStore } from 'pinia'
 
+const GRAINS = 2
+
 export const useGameStore = defineStore('game', {
   state: () => ({
     gameState: [
-      { x1: 4 },
-      { x2: 4 },
-      { x3: 4 },
-      { x4: 4 },
-      { x5: 4 },
-      { x6: 4 },
+      { x1: GRAINS },
+      { x2: GRAINS },
+      { x3: GRAINS },
+      { x4: GRAINS },
+      { x5: GRAINS },
+      { x6: GRAINS },
       { x7: 0 },
-      { y1: 4 },
-      { y2: 4 },
-      { y3: 4 },
-      { y4: 4 },
-      { y5: 4 },
-      { y6: 4 },
+      { y1: GRAINS },
+      { y2: GRAINS },
+      { y3: GRAINS },
+      { y4: GRAINS },
+      { y5: GRAINS },
+      { y6: GRAINS },
       { y7: 0 }
     ]
   }),
   actions: {
     resetGame() {
       const initialState = [
-        { x1: 4 },
-        { x2: 4 },
-        { x3: 4 },
-        { x4: 4 },
-        { x5: 4 },
-        { x6: 4 },
+        { x1: GRAINS },
+        { x2: GRAINS },
+        { x3: GRAINS },
+        { x4: GRAINS },
+        { x5: GRAINS },
+        { x6: GRAINS },
         { x7: 0 },
-        { y1: 4 },
-        { y2: 4 },
-        { y3: 4 },
-        { y4: 4 },
-        { y5: 4 },
-        { y6: 4 },
+        { y1: GRAINS },
+        { y2: GRAINS },
+        { y3: GRAINS },
+        { y4: GRAINS },
+        { y5: GRAINS },
+        { y6: GRAINS },
         { y7: 0 }
       ]
 

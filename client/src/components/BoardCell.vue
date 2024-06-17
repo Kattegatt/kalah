@@ -37,11 +37,10 @@ export default defineComponent({
     const cellZero = computed(() => cellValue.value === 0)
 
     let clickable = computed(() => {
-      return userSide.value === type.value
+      return true //userSide.value === type.value
     })
 
     watch(cellValue, () => {
-      console.log('watcher')
       landSignal.value = true
       setTimeout(() => {
         landSignal.value = false

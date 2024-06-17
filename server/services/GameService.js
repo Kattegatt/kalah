@@ -15,33 +15,48 @@ class GameService {
   }
   async handleMove(data) {
     const { gameState, cellData } = data;
+    console.log("GameService ~ handleMove ~ gameState:", gameState);
+    console.log("GameService ~ handleMove ~ cellData:", cellData);
     let newGameState = [...gameState];
     const moveCell = Object.keys(cellData)[0];
     let grainCount = Object.values(cellData)[0];
 
     const skippableCellKey = moveCell.includes("x") ? "y7" : "x7";
+    console.log(
+      "GameService ~ handleMove ~ skippableCellKey:",
+      skippableCellKey
+    );
     const storeKey = moveCell.includes("x") ? "x7" : "y7";
+    console.log("GameService ~ handleMove ~ storeKey:", storeKey);
 
     const startIndex =
       gameState.findIndex((item) => Object.keys(item)[0] === moveCell) + 1;
+
     newGameState[startIndex - 1] = { [moveCell]: 0 };
 
     let i = 0;
     let extraTurn = false;
     while (grainCount > 0) {
       const cellKey =
-        i >= 13
-          ? String(Object.keys(newGameState[i - 13]))
+        i >= 14
+          ? String(Object.keys(newGameState[i - 14]))
           : String(Object.keys(gameState[i]));
 
+      console.log(
+        `handleMove ~ cellKey: ${cellKey} -- skippableCellKey: ${skippableCellKey}`
+      );
+
       if (cellKey === skippableCellKey) {
+        console.log("skipping cell");
+        console.log(`ITERATION ${i}\n`);
+
         i++;
         continue;
       }
 
-      if (i >= 13) {
-        const oldCellValue = parseInt(Object.values(newGameState[i - 13]));
-        newGameState[i - 13] = { [cellKey]: oldCellValue + 1 };
+      if (i >= 14) {
+        const oldCellValue = parseInt(Object.values(newGameState[i - 14]));
+        newGameState[i - 14] = { [cellKey]: oldCellValue + 1 };
         grainCount -= 1;
       } else if (i >= startIndex) {
         const oldCellValue = parseInt(Object.values(gameState[i]));
@@ -50,6 +65,7 @@ class GameService {
       }
 
       if (grainCount === 0) {
+        // handling last cell drop
         if (cellKey == "x7" || cellKey == "y7") {
           extraTurn = true;
         } else {
@@ -60,12 +76,18 @@ class GameService {
           );
         }
       }
+      console.log(`ITERATION ${i}\n--------------\n`);
       i++;
     }
     return { newGameState, extraTurn };
   }
 
   async handleCapture(state, landedCellKey, storeKey) {
+    /* 
+    if your grain lands on empty cell you claiming
+    take opponent's grains from opposite cell
+    + 1 your grain from cell it have landed
+    */
     const storeInd = state.findIndex((obj) =>
       Object.prototype.hasOwnProperty.call(obj, storeKey)
     );
@@ -79,11 +101,17 @@ class GameService {
     if (!oppositeInd) return state;
 
     const oppositeValue = Object.values(state[oppositeInd])[0];
+    console.log("GameService ~ handleCapture ~ oppositeValue:", oppositeValue);
     const storeValue = parseInt(Object.values(state[storeInd]));
     const oppositeKey = Object.keys(state[oppositeInd])[0];
     const landedOnEmpty = Object.values(state[landedInd])[0] == 1;
+    console.log("GameService ~ handleCapture ~ landedOnEmpty:", landedOnEmpty);
     const landOnPlayersCell =
       landedCellKey[0] == storeKey[0] && landedCellKey != storeKey;
+    console.log(
+      "GameService ~ handleCapture ~ landOnPlayersCell:",
+      landOnPlayersCell
+    );
 
     if (landOnPlayersCell && landedOnEmpty && oppositeValue > 0) {
       const sum = oppositeValue + 1 + storeValue;

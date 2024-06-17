@@ -46,7 +46,6 @@ io.on("connection", (socket) => {
 
   socket.on("move", (data) => {
     const newGameState = GameService.handleMove(data);
-    console.log(`Socket data: ${socket}`);
     newGameState.then((res) => io.emit("returnState", res));
   });
 
