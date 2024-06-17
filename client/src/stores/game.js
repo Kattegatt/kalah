@@ -29,7 +29,7 @@ export const useGameStore = defineStore('game', {
         { x5: 4 },
         { x6: 4 },
         { x7: 0 },
-        { y1: 1 },
+        { y1: 4 },
         { y2: 4 },
         { y3: 4 },
         { y4: 4 },

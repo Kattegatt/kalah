@@ -1,6 +1,7 @@
 <template>
-  <div class="board-container">
-    <BoardCell size="big" type="y" :cell="getMainCell('y')"></BoardCell>
+  <!-- For X user -->
+  <div v-if="thisUserSide === 'x'" class="board-container">
+    <BoardCell size="big" type="y" :cell="getMainCell('y')" key="mainY"></BoardCell>
     <div class="grid grid-cols-6 gap-4">
       <BoardCell
         v-for="cell in getSmallCells('y').reverse()"
@@ -8,6 +9,7 @@
         :cell="cell"
         size="small"
         type="y"
+        :userSide="thisUserSide"
         @move="handleMove"
       ></BoardCell>
       <BoardCell
@@ -16,16 +18,44 @@
         :cell="cell"
         size="small"
         type="x"
+        :userSide="thisUserSide"
         @move="handleMove"
       ></BoardCell>
     </div>
+    <BoardCell size="big" type="x" :cell="getMainCell('x')" key="mainX"></BoardCell>
+    <button class="btn" @click="resetGame">Reset</button>
+  </div>
+  <!-- For Y user -->
+  <div v-if="thisUserSide === 'y'" class="board-container">
     <BoardCell size="big" type="x" :cell="getMainCell('x')"></BoardCell>
+    <div class="grid grid-cols-6 gap-4">
+      <BoardCell
+        v-for="cell in getSmallCells('x').reverse()"
+        :key="Object.keys(cell)[0]"
+        :cell="cell"
+        size="small"
+        type="x"
+        :userSide="thisUserSide"
+        @move="handleMove"
+      ></BoardCell>
+      <BoardCell
+        v-for="cell in getSmallCells('y')"
+        :key="Object.keys(cell)[0]"
+        :cell="cell"
+        size="small"
+        type="y"
+        :userSide="thisUserSide"
+        @move="handleMove"
+      ></BoardCell>
+    </div>
+    <BoardCell size="big" type="y" :cell="getMainCell('y')" key="mainY"></BoardCell>
+
     <button class="btn" @click="resetGame">Reset</button>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useGameStore } from '../stores/game'
 import BoardCell from './BoardCell.vue'
 import { socket, joinGame } from '@/socket'
@@ -38,19 +68,17 @@ export default {
     const gameId = ref('1234')
     const gameStore = useGameStore()
     const gameState = gameStore.$state.gameState
-    let extraTurn = ref(false)
-    // const player = ref('x')
+    let isMyTurn = ref(false)
+    let thisUserSide = ref(localStorage.getItem('kalah_user'))
 
-    // watch(socketState.latestState, () => {
-    //   console.log('watch ~ latestState:', socketState.latestState)
-    // })
+    onMounted(() => {})
 
     joinGame(gameId.value)
 
     socket.on('returnState', (args) => {
       console.log('socket.on ~ args:', args)
       const { newGameState, isExtraTurn } = args
-      extraTurn.value = isExtraTurn
+      isMyTurn.value = isExtraTurn
       updateGameState(newGameState)
     })
 
@@ -84,7 +112,8 @@ export default {
       handleMove,
       getSmallCells,
       getMainCell,
-      extraTurn
+      isMyTurn,
+      thisUserSide
     }
   }
 }

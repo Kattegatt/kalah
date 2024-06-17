@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="[calcStyle, { disabled: cellZero, redBorder: landSignal }]"
+    :class="[calcStyle, { disabled: cellZero || !clickable, redBorder: landSignal }]"
     class="rounded-xl flex items-center justify-center"
     @click="emitClick"
   >
@@ -24,14 +24,21 @@ export default defineComponent({
     type: {
       type: String,
       required: true
+    },
+    userSide: {
+      type: String
     }
   },
   setup(props, { emit }) {
-    const { cell, size, type } = toRefs(props)
+    const { cell, size, type, userSide } = toRefs(props)
     let landSignal = ref(false)
     const calcStyle = computed(() => `${size.value} ${type.value}`)
     const cellValue = computed(() => Object.values(cell.value)[0])
     const cellZero = computed(() => cellValue.value === 0)
+
+    let clickable = computed(() => {
+      return userSide.value === type.value
+    })
 
     watch(cellValue, () => {
       console.log('watcher')
@@ -49,7 +56,8 @@ export default defineComponent({
       calcStyle,
       cellValue,
       cellZero,
-      emitClick
+      emitClick,
+      clickable
     }
   }
 })
