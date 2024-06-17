@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex gap-2">
     <button @click="showRegisterModal = true" class="btn">Register</button>
     <button @click="showLoginModal = true" class="btn">Login</button>
     <RegisterModal v-if="showRegisterModal" @close="showRegisterModal = false" />
