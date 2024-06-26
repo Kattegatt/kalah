@@ -1,16 +1,16 @@
-import Game from "../models/Game.js";
+import GameModel from "../db_models/Game.js";
 
 class GameService {
   async create(game) {
     try {
-      const createdGame = await Game.create(game);
+      const createdGame = await GameModel.create(game);
       return createdGame;
     } catch (error) {
       throw new Error(error);
     }
   }
   async getAll() {
-    const games = await Game.find();
+    const games = await GameModel.find();
     return games;
   }
   async handleMove(data) {
@@ -126,7 +126,7 @@ class GameService {
   async getAllByUserId(userId) {
     // get all games that user participated in
     if (!userId) throw new Error("id not provided");
-    const games = await Game.find({
+    const games = await GameModel.find({
       $or: [{ player1: userId }, { player2: userId }],
     });
     if (games) {
@@ -136,7 +136,7 @@ class GameService {
 
   async getOne(gameId) {
     if (!gameId) throw new Error("id not provided");
-    const game = await Game.findById(gameId);
+    const game = await GameModel.findById(gameId);
     if (game) {
       return game;
     } else throw new Error("game not found");
@@ -144,10 +144,14 @@ class GameService {
 
   async update(gameId, game) {
     if (!gameId) throw new Error("id not provided");
-    const updatedGame = await Game.findOneAndUpdate({ _id: gameId }, game, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedGame = await GameModel.findOneAndUpdate(
+      { _id: gameId },
+      game,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (updatedGame) {
       return updatedGame;
     } else throw new Error("game not found");
@@ -155,7 +159,7 @@ class GameService {
 
   async delete(gameId) {
     if (!gameId) throw new Error("id not provided");
-    const deletedGame = await Game.findOneAndDelete({ _id: gameId });
+    const deletedGame = await GameModel.findOneAndDelete({ _id: gameId });
     console.log("GameService ~ delete ~ deletedGame:", deletedGame);
     if (deletedGame) {
       return deletedGame;

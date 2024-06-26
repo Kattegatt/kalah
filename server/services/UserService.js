@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User from "../db_models/User.js";
 import bcryptjs from "bcryptjs";
 import jwtService from "./jwt.js";
 
