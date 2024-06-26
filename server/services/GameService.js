@@ -88,6 +88,7 @@ class GameService {
     take opponent's grains from opposite cell
     + 1 your grain from cell it have landed
     */
+    console.log("handleCapture triggerd");
     const storeInd = state.findIndex((obj) =>
       Object.prototype.hasOwnProperty.call(obj, storeKey)
     );
@@ -97,8 +98,7 @@ class GameService {
       )
     );
     const oppositeInd = this._opposites[landedInd];
-
-    if (!oppositeInd) return state;
+    console.log("GameService ~ handleCapture ~ oppositeInd:", oppositeInd);
 
     const oppositeValue = Object.values(state[oppositeInd])[0];
     console.log("GameService ~ handleCapture ~ oppositeValue:", oppositeValue);

@@ -37,7 +37,7 @@ export default defineComponent({
     const cellZero = computed(() => cellValue.value === 0)
 
     let clickable = computed(() => {
-      return true //userSide.value === type.value
+      return userSide.value === type.value
     })
 
     watch(cellValue, () => {

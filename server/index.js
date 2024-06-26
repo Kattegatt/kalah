@@ -44,8 +44,8 @@ io.on("connection", (socket) => {
     io.to(gameId).emit("newPlayer", { playerId: socket.id });
   });
 
-  socket.on("move", (data) => {
-    const newGameState = GameService.handleMove(data);
+  socket.on("move", ({ gameState, cellData }) => {
+    const newGameState = GameService.handleMove({ gameState, cellData });
     newGameState.then((res) => io.emit("returnState", res));
   });
 
