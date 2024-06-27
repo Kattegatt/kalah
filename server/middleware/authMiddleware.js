@@ -1,4 +1,4 @@
-import jwtService from "../services/jwt.js";
+import jwtService from "../services/JwtService.js";
 
 function authMiddleware(req, res, next) {
   if (req.method === "OPTIONS") {

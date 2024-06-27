@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 
 const gameStateDefault = [
-  { key: "x1", value: 4 },
-  { key: "x2", value: 4 },
-  { key: "x3", value: 4 },
-  { key: "x4", value: 4 },
-  { key: "x5", value: 4 },
-  { key: "x6", value: 4 },
+  { key: "x1", value: 2 },
+  { key: "x2", value: 2 },
+  { key: "x3", value: 2 },
+  { key: "x4", value: 2 },
+  { key: "x5", value: 2 },
+  { key: "x6", value: 2 },
   { key: "x7", value: 0 },
-  { key: "y1", value: 4 },
-  { key: "y2", value: 4 },
-  { key: "y3", value: 4 },
-  { key: "y4", value: 4 },
-  { key: "y5", value: 4 },
-  { key: "y6", value: 4 },
+  { key: "y1", value: 2 },
+  { key: "y2", value: 2 },
+  { key: "y3", value: 2 },
+  { key: "y4", value: 2 },
+  { key: "y5", value: 2 },
+  { key: "y6", value: 2 },
   { key: "y7", value: 0 },
 ];
 

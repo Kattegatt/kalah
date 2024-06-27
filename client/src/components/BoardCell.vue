@@ -27,17 +27,20 @@ export default defineComponent({
     },
     userSide: {
       type: String
+    },
+    turn: {
+      type: Boolean
     }
   },
   setup(props, { emit }) {
-    const { cell, size, type, userSide } = toRefs(props)
+    const { cell, size, type, userSide, turn } = toRefs(props)
     let landSignal = ref(false)
     const calcStyle = computed(() => `${size.value} ${type.value}`)
     const cellValue = computed(() => Object.values(cell.value)[0])
     const cellZero = computed(() => cellValue.value === 0)
 
     let clickable = computed(() => {
-      return userSide.value === type.value
+      return userSide.value === type.value && turn
     })
 
     watch(cellValue, () => {

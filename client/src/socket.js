@@ -2,6 +2,7 @@ import { reactive } from 'vue'
 import { io } from 'socket.io-client'
 
 export const socketState = reactive({
+  gameId: null,
   connected: false,
   returnStateEvents: [],
   latestState: {},
@@ -23,11 +24,20 @@ socket.on('disconnect', () => {
 })
 
 socket.on('newPlayer', ({ playerId }) => {
-  console.log(`Player with id ${playerId} connected joined the game`)
+  console.log(`Player with id ${playerId} joined the game`)
+})
+
+socket.on('createdGame', (gameId) => {
+  socketState.gameId = gameId
+  socket.emit('joinGame', gameId)
 })
 
 export const joinGame = (gameId) => {
   socket.emit('joinGame', gameId)
+}
+
+export const createGame = () => {
+  socket.emit('createGame')
 }
 // socket.on('returnState', (args) => {
 //   console.log('socket.on ~ args:', args)

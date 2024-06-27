@@ -10,6 +10,7 @@
         size="small"
         type="y"
         :userSide="thisUserSide"
+        :turn="isMyTurn"
         @move="handleMove"
       ></BoardCell>
       <BoardCell
@@ -19,6 +20,7 @@
         size="small"
         type="x"
         :userSide="thisUserSide"
+        :turn="isMyTurn"
         @move="handleMove"
       ></BoardCell>
     </div>
@@ -36,6 +38,7 @@
         size="small"
         type="x"
         :userSide="thisUserSide"
+        :turn="isMyTurn"
         @move="handleMove"
       ></BoardCell>
       <BoardCell
@@ -45,6 +48,7 @@
         size="small"
         type="y"
         :userSide="thisUserSide"
+        :turn="isMyTurn"
         @move="handleMove"
       ></BoardCell>
     </div>
@@ -58,31 +62,34 @@
 import { ref, onMounted } from 'vue'
 import { useGameStore } from '../stores/game'
 import BoardCell from './BoardCell.vue'
-import { socket, joinGame } from '@/socket'
+import { socket, joinGame, createGame } from '@/socket'
 
 export default {
   components: {
     BoardCell
   },
   setup() {
-    const gameId = ref('1234')
+    // const gameId = ref('1234')
     const gameStore = useGameStore()
     const gameState = gameStore.$state.gameState
-    let isMyTurn = ref(false)
+    let isMyTurn = ref(true)
     let thisUserSide = ref(localStorage.getItem('kalah_user'))
 
     onMounted(() => {})
 
-    joinGame(gameId.value)
+    createGame()
+    // joinGame(gameId.value)
 
-    socket.on('returnState', (args) => {
-      console.log('socket.on ~ args:', args)
-      const { newGameState, isExtraTurn } = args
-      isMyTurn.value = isExtraTurn
+    socket.on('returnState', (newGameState) => {
       updateGameState(newGameState)
     })
 
+    socket.on('currentPlayer', (playerId) => {
+      if (playerId === socket.id) isMyTurn.value = true
+    })
+
     const handleMove = (cellData) => {
+      isMyTurn.value = false
       socket.emit('move', { gameState, cellData })
     }
 

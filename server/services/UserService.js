@@ -1,6 +1,6 @@
 import User from "../db_models/User.js";
 import bcryptjs from "bcryptjs";
-import jwtService from "./jwt.js";
+import jwtService from "./JwtService.js";
 
 class UserService {
   async create(user) {

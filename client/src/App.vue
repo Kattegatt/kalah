@@ -1,19 +1,20 @@
-<script>
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/game">Game</RouterLink>
-      <!-- Add more links if needed -->
     </nav>
   </header>
   <main>
     <RouterView />
   </main>
 </template>
+
+<script setup>
+import { onMounted } from 'vue'
+
+onMounted(() => {})
+</script>
 
 <style scoped>
 header {

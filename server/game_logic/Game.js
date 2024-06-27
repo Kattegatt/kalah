@@ -1,30 +1,43 @@
 // server/gameLogic/Game.js
 
 class Game {
-  constructor(id, gameState, currentPlayer = "x") {
-    this.isActive = true;
+  constructor(id, gameState) {
+    this.isActive = false;
     this.id = id;
-    this.currentPlayer = currentPlayer;
+    this.currentPlayer = null;
+    this.players = [];
     this.gameState = gameState || [
-      { x1: 4 },
-      { x2: 4 },
-      { x3: 4 },
-      { x4: 4 },
-      { x5: 4 },
-      { x6: 4 },
+      { x1: 2 },
+      { x2: 2 },
+      { x3: 2 },
+      { x4: 2 },
+      { x5: 2 },
+      { x6: 2 },
       { x7: 0 },
-      { y1: 4 },
-      { y2: 4 },
-      { y3: 4 },
-      { y4: 4 },
-      { y5: 4 },
-      { y6: 4 },
+      { y1: 2 },
+      { y2: 2 },
+      { y3: 2 },
+      { y4: 2 },
+      { y5: 2 },
+      { y6: 2 },
       { y7: 0 },
     ];
   }
 
   getGameState() {
     return this.gameState;
+  }
+
+  getCurrentPlayer() {
+    return this.currentPlayer;
+  }
+
+  addPlayer(socketId) {
+    if (this.players.length >= 2) {
+      throw new Error("There are already 2 players in the game");
+    } else {
+      this.players.push(socketId);
+    }
   }
 
   async handleMove(data) {
@@ -34,12 +47,7 @@ class Game {
     let grainCount = Object.values(cellData)[0];
 
     const skippableCellKey = moveCell.includes("x") ? "y7" : "x7";
-    // console.log(
-    //   "GameService ~ handleMove ~ skippableCellKey:",
-    //   skippableCellKey
-    // );
     const storeKey = moveCell.includes("x") ? "x7" : "y7";
-    // console.log("GameService ~ handleMove ~ storeKey:", storeKey);
 
     const startIndex =
       gameState.findIndex((item) => Object.keys(item)[0] === moveCell) + 1;
@@ -55,9 +63,6 @@ class Game {
           : String(Object.keys(gameState[i]));
 
       if (cellKey === skippableCellKey) {
-        // console.log("skipping cell");
-        // console.log(`ITERATION ${i}\n`);
-
         i++;
         continue;
       }
@@ -84,7 +89,6 @@ class Game {
           );
         }
       }
-      //   console.log(`ITERATION ${i}\n--------------\n`);
       i++;
     }
     this.gameState = newGameState;
@@ -101,7 +105,6 @@ class Game {
     take opponent's grains from opposite cell
     + 1 your grain from cell it have landed
     */
-    // console.log("handleCapture triggerd");
     const storeInd = state.findIndex((obj) =>
       Object.prototype.hasOwnProperty.call(obj, storeKey)
     );
@@ -111,36 +114,40 @@ class Game {
       )
     );
     const oppositeInd = this._opposites[landedInd];
-    console.log("GameService ~ handleCapture ~ oppositeInd:", oppositeInd);
 
     const oppositeValue = Object.values(state[oppositeInd])[0];
-    console.log("GameService ~ handleCapture ~ oppositeValue:", oppositeValue);
     const storeValue = parseInt(Object.values(state[storeInd]));
     const oppositeKey = Object.keys(state[oppositeInd])[0];
     const landedOnEmpty = Object.values(state[landedInd])[0] == 1;
-    console.log("GameService ~ handleCapture ~ landedOnEmpty:", landedOnEmpty);
     const landOnPlayersCell =
       landedCellKey[0] == storeKey[0] && landedCellKey != storeKey;
-    console.log(
-      "GameService ~ handleCapture ~ landOnPlayersCell:",
-      landOnPlayersCell
-    );
 
     if (landOnPlayersCell && landedOnEmpty && oppositeValue > 0) {
       const sum = oppositeValue + 1 + storeValue;
-      console.log(`GOOOOOOOL~~ sum: ${sum}`);
       state[storeInd] = { [storeKey]: sum };
       state[landedInd] = { [landedCellKey]: 0 };
       state[oppositeInd] = { [oppositeKey]: 0 };
     }
     return state;
   }
-  switchPlayer() {
+  switchPlayer(playerId) {
+    // set chosen player if provided or
+    if (!playerId && this.players.length === 2) {
+      this.currentPlayer = this.players.filter(
+        (id) => id != this.currentPlayer
+      );
+    } else if (!playerId && this.players.length === 1) {
+      this.currentPlayer = this.players[0];
+    } else if (!this.players.includes(playerId)) {
+      throw new Error("there is no such player in the game");
+    } else {
+      this.currentPlayer = playerId;
+    }
+
     this.currentPlayer = this.currentPlayer === "x" ? "y" : "x";
   }
 
   isGameOver() {
-    // if false return false if true return winner
     const playerXCells = this.gameState.filter(
       (cell) =>
         Object.keys(cell)[0].includes("x") &&

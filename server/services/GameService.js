@@ -1,5 +1,5 @@
 import GameModel from "../db_models/Game.js";
-
+GameModel.create();
 class GameService {
   async create(game) {
     try {
@@ -15,19 +15,12 @@ class GameService {
   }
   async handleMove(data) {
     const { gameState, cellData } = data;
-    console.log("GameService ~ handleMove ~ gameState:", gameState);
-    console.log("GameService ~ handleMove ~ cellData:", cellData);
     let newGameState = [...gameState];
     const moveCell = Object.keys(cellData)[0];
     let grainCount = Object.values(cellData)[0];
 
     const skippableCellKey = moveCell.includes("x") ? "y7" : "x7";
-    console.log(
-      "GameService ~ handleMove ~ skippableCellKey:",
-      skippableCellKey
-    );
     const storeKey = moveCell.includes("x") ? "x7" : "y7";
-    console.log("GameService ~ handleMove ~ storeKey:", storeKey);
 
     const startIndex =
       gameState.findIndex((item) => Object.keys(item)[0] === moveCell) + 1;
@@ -42,14 +35,7 @@ class GameService {
           ? String(Object.keys(newGameState[i - 14]))
           : String(Object.keys(gameState[i]));
 
-      console.log(
-        `handleMove ~ cellKey: ${cellKey} -- skippableCellKey: ${skippableCellKey}`
-      );
-
       if (cellKey === skippableCellKey) {
-        console.log("skipping cell");
-        console.log(`ITERATION ${i}\n`);
-
         i++;
         continue;
       }
@@ -76,7 +62,6 @@ class GameService {
           );
         }
       }
-      console.log(`ITERATION ${i}\n--------------\n`);
       i++;
     }
     return { newGameState, extraTurn };
@@ -88,7 +73,6 @@ class GameService {
     take opponent's grains from opposite cell
     + 1 your grain from cell it have landed
     */
-    console.log("handleCapture triggerd");
     const storeInd = state.findIndex((obj) =>
       Object.prototype.hasOwnProperty.call(obj, storeKey)
     );
@@ -98,20 +82,13 @@ class GameService {
       )
     );
     const oppositeInd = this._opposites[landedInd];
-    console.log("GameService ~ handleCapture ~ oppositeInd:", oppositeInd);
 
     const oppositeValue = Object.values(state[oppositeInd])[0];
-    console.log("GameService ~ handleCapture ~ oppositeValue:", oppositeValue);
     const storeValue = parseInt(Object.values(state[storeInd]));
     const oppositeKey = Object.keys(state[oppositeInd])[0];
     const landedOnEmpty = Object.values(state[landedInd])[0] == 1;
-    console.log("GameService ~ handleCapture ~ landedOnEmpty:", landedOnEmpty);
     const landOnPlayersCell =
       landedCellKey[0] == storeKey[0] && landedCellKey != storeKey;
-    console.log(
-      "GameService ~ handleCapture ~ landOnPlayersCell:",
-      landOnPlayersCell
-    );
 
     if (landOnPlayersCell && landedOnEmpty && oppositeValue > 0) {
       const sum = oppositeValue + 1 + storeValue;
