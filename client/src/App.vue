@@ -3,6 +3,7 @@
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/game">Game</RouterLink>
+      <RouterLink to="/lobby">Lobby</RouterLink>
     </nav>
   </header>
   <main>

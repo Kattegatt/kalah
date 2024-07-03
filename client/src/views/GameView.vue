@@ -4,22 +4,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import GameBoard from '../components/GameBoard.vue'
-// import { useGameStore } from '../stores/game'
-
-export default {
-  components: {
-    GameBoard
-  },
-
-  data() {
-    return {
-      showRegisterModal: false,
-      showLoginModal: false
-    }
-  }
-}
 </script>
 
 <style scoped></style>

@@ -7,35 +7,16 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import RegisterModal from '../components/RegisterModal.vue'
 import LoginModal from '../components/LoginModal.vue'
-import { useGameStore } from '../stores/game'
+// import { useGameStore } from '../stores/game'
 
-export default {
-  components: {
-    RegisterModal,
-    LoginModal
-  },
-  setup() {
-    const gameStore = useGameStore()
+const showRegisterModal = ref(false)
+const showLoginModal = ref(false)
 
-    const resetGame = () => {
-      gameStore.resetGame()
-    }
-
-    return {
-      gameState: gameStore.gameState,
-      resetGame
-    }
-  },
-  data() {
-    return {
-      showRegisterModal: false,
-      showLoginModal: false
-    }
-  }
-}
+// const gameStore = useGameStore()
 </script>
 
 <style scoped>

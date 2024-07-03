@@ -8,61 +8,50 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, toRefs, computed, watch, ref } from 'vue'
+<script setup>
+import { ref, computed, watch, toRefs } from 'vue'
 
-export default defineComponent({
-  props: {
-    cell: {
-      type: Object,
-      required: true
-    },
-    size: {
-      type: String,
-      required: true
-    },
-    type: {
-      type: String,
-      required: true
-    },
-    userSide: {
-      type: String
-    },
-    turn: {
-      type: Boolean
-    }
+const props = defineProps({
+  cell: {
+    type: Object,
+    required: true
   },
-  setup(props, { emit }) {
-    const { cell, size, type, userSide, turn } = toRefs(props)
-    let landSignal = ref(false)
-    const calcStyle = computed(() => `${size.value} ${type.value}`)
-    const cellValue = computed(() => Object.values(cell.value)[0])
-    const cellZero = computed(() => cellValue.value === 0)
-
-    let clickable = computed(() => {
-      return userSide.value === type.value && turn
-    })
-
-    watch(cellValue, () => {
-      landSignal.value = true
-      setTimeout(() => {
-        landSignal.value = false
-      }, 500)
-    })
-    const emitClick = () => {
-      emit('move', cell.value)
-    }
-
-    return {
-      landSignal,
-      calcStyle,
-      cellValue,
-      cellZero,
-      emitClick,
-      clickable
-    }
+  size: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String,
+    required: true
+  },
+  userSide: {
+    type: String
+  },
+  turn: {
+    type: Boolean
   }
 })
+
+const { cell, size, type, userSide, turn } = toRefs(props)
+let landSignal = ref(false)
+
+const calcStyle = computed(() => `${size.value} ${type.value}`)
+const cellValue = computed(() => Object.values(cell.value)[0])
+const cellZero = computed(() => cellValue.value === 0)
+
+let clickable = computed(() => userSide.value === type.value && turn)
+
+watch(cellValue, () => {
+  landSignal.value = true
+  setTimeout(() => {
+    landSignal.value = false
+  }, 500)
+})
+
+const emit = defineEmits(['move'])
+const emitClick = () => {
+  emit('move', cell.value)
+}
 </script>
 
 <style scoped>
@@ -85,9 +74,11 @@ export default defineComponent({
 .y {
   @apply bg-green-300;
 }
+
 .redBorder {
   border: 2px solid red;
 }
+
 .disabled {
   pointer-events: none;
   border: none;
