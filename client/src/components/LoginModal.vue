@@ -24,9 +24,10 @@ import { ref, onMounted } from 'vue'
 const emit = defineEmits(['close'])
 
 const missClickEventListener = (element) => {
-  document.addEventListener('click', (event) => {
+  element.addEventListener('click', (event) => {
     console.log(event.target)
     if (event.target === element) {
+      element.removeEventListener('click', null)
       emit('close')
     }
   })
