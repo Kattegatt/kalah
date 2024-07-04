@@ -109,6 +109,9 @@ fieldset {
   padding-top: 0.5rem;
   border: 0.1rem solid #bab5a1;
 }
+.yorha-border {
+  border: 0.1rem solid #bab5a1;
+}
 legend {
   padding: 0 0.5rem;
 }

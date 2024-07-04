@@ -27,11 +27,6 @@ socket.on('newPlayer', ({ playerId }) => {
   console.log(`Player with id ${playerId} joined the game`)
 })
 
-socket.on('createdGame', (gameId) => {
-  socketState.gameId = gameId
-  socket.emit('joinGame', gameId)
-})
-
 export const joinGame = (gameId) => {
   socket.emit('joinGame', gameId)
 }
