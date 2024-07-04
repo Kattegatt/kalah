@@ -1,86 +1,89 @@
 <template>
-  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
-    <div class="bg-white p-8 rounded shadow-md">
-      <h2 class="text-xl mb-4">Register</h2>
-      <form @submit.prevent="register">
-        <input v-model="username" type="text" placeholder="Username" required class="input mb-2" />
-        <input v-model="email" type="email" placeholder="Email" required class="input mb-2" />
-        <input
-          v-model="password"
-          type="password"
-          placeholder="Password"
-          required
-          class="input mb-2"
-        />
+  <div class="fixed inset-0 flex items-center justify-center background">
+    <form @submit.prevent="login">
+      <fieldset class="p-5">
+        <legend><h1>Sign Up</h1></legend>
+        <input v-model="username" type="text" placeholder="Username" required class="input" />
+        <input v-model="email" type="email" placeholder="Email" required class="input" />
+        <input v-model="password" type="password" placeholder="Password" required class="input" />
         <input
           v-model="repeatPassword"
           type="password"
           placeholder="Repeat Password"
           required
-          class="input mb-4"
+          class="input"
         />
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" @click="register" class="btn">Register</button>
         <button type="button" @click="$emit('close')" class="btn ml-2">Cancel</button>
-      </form>
-    </div>
+      </fieldset>
+    </form>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      email: '',
-      password: '',
-      repeatPassword: ''
+<script setup>
+import { ref, onMounted } from 'vue'
+const emit = defineEmits(['close'])
+
+const missClickEventListener = (element) => {
+  element.addEventListener('click', (event) => {
+    if (event.target === element) {
+      element.removeEventListener('click', null)
+      emit('close')
     }
-  },
-  methods: {
-    async register() {
-      if (this.password !== this.repeatPassword) {
-        alert('Passwords do not match')
-        return
-      }
+  })
+}
+onMounted(() => {
+  const background = document.getElementsByClassName('background')[0]
+  setTimeout(() => missClickEventListener(background), 100)
+})
 
-      const url = 'http://localhost:5050/users'
+const username = ref('')
+const email = ref('')
+const password = ref('')
+const repeatPassword = ref('')
 
-      const body = JSON.stringify({
-        username: this.username,
-        email: this.email,
-        password: this.password
-      })
+const register = async () => {
+  // validation of required inputs nedded
+  if (this.password !== this.repeatPassword) {
+    alert('Passwords do not match')
+    return
+  }
 
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: body
-        })
-        if (response.ok) {
-          const data = await response.json()
-          const { token, refreshToken } = data
-          localStorage.setItem('dk_kalah_access_token', JSON.stringify(token))
-          localStorage.setItem('dk_kalah_refresh_token', JSON.stringify(refreshToken))
-          this.$emit('close')
-        }
-      } catch (error) {
-        console.log(error.message)
-        // this.handleError
-      }
+  const url = 'http://localhost:5050/users'
+
+  const body = JSON.stringify({
+    username: this.username,
+    email: this.email,
+    password: this.password
+  })
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: body
+    })
+    if (response.ok) {
+      const data = await response.json()
+      const { token, refreshToken } = data
+      localStorage.setItem('dk_kalah_access_token', JSON.stringify(token))
+      localStorage.setItem('dk_kalah_refresh_token', JSON.stringify(refreshToken))
+      this.$emit('close')
     }
-    // handleError(error) {}
+  } catch (error) {
+    console.log(error.message)
+    // this.handleError
   }
 }
 </script>
 
 <style scoped>
 .input {
-  @apply border rounded w-full py-2 px-3;
+  @apply w-full mb-3;
 }
 .btn {
-  @apply bg-blue-500 text-white py-2 px-4 rounded;
+  @apply py-2 px-4;
 }
 </style>

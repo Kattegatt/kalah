@@ -5,9 +5,21 @@
       <RouterLink to="/game">Game</RouterLink>
       <RouterLink to="/lobby">Lobby</RouterLink>
     </nav>
+    <div class="pattern">
+      <div class="container">
+        <div class="pattern-inner"></div>
+      </div>
+    </div>
   </header>
   <main>
     <RouterView />
+    <div class="absolute bottom-0 w-full">
+      <div class="pattern">
+        <div class="container">
+          <div class="pattern-inner"></div>
+        </div>
+      </div>
+    </div>
   </main>
 </template>
 
@@ -19,11 +31,11 @@ onMounted(() => {})
 
 <style scoped>
 header {
-  @apply bg-gray-800 text-white py-4;
+  @apply text-white;
 }
 
 nav {
-  @apply flex justify-center space-x-4;
+  @apply bg-gray-800 flex justify-center space-x-4;
 }
 
 nav a {

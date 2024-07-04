@@ -1,6 +1,6 @@
 <template>
   <!-- For X user -->
-  <div v-if="thisUserSide === 'x'" class="board-container">
+  <fieldset v-if="thisUserSide === 'x'" class="board-container">
     <BoardCell size="big" type="y" :cell="getMainCell('y')" key="mainY"></BoardCell>
     <div class="grid grid-cols-6 gap-4">
       <BoardCell
@@ -25,10 +25,10 @@
       ></BoardCell>
     </div>
     <BoardCell size="big" type="x" :cell="getMainCell('x')" key="mainX"></BoardCell>
-    <button class="btn" @click="resetGame">Reset</button>
-  </div>
+    <!-- <button class="btn" @click="resetGame">Reset</button> -->
+  </fieldset>
   <!-- For Y user -->
-  <div v-if="thisUserSide === 'y'" class="board-container">
+  <fieldset v-if="thisUserSide === 'y'" class="board-container">
     <BoardCell size="big" type="x" :cell="getMainCell('x')"></BoardCell>
     <div class="grid grid-cols-6 gap-4">
       <BoardCell
@@ -53,8 +53,8 @@
       ></BoardCell>
     </div>
     <BoardCell size="big" type="y" :cell="getMainCell('y')" key="mainY"></BoardCell>
-    <button class="btn" @click="resetGame">Reset</button>
-  </div>
+    <!-- <button class="btn" @click="resetGame">Reset</button> -->
+  </fieldset>
 </template>
 
 <script setup>
@@ -109,7 +109,7 @@ const getMainCell = (side) => {
 
 <style scoped>
 .board-container {
-  @apply flex p-4 gap-4 rounded-lg bg-slate-600;
+  @apply flex p-4 gap-4 rounded-sm;
 }
 
 .btn {

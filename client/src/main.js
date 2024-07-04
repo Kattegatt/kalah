@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import './tailwind.css'
 import './assets/css/yorha.css'
+import './assets/css/yorha_extra.scss'
 
 import App from './App.vue'
 import router from './router'

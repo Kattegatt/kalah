@@ -1,20 +1,14 @@
 <template>
-  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center background">
-    <div class="bg-white p-8 rounded shadow-md loginModal">
-      <h2 class="text-xl mb-4">Login</h2>
-      <form @submit.prevent="login">
-        <input v-model="email" type="email" placeholder="Email" required class="input mb-2" />
-        <input
-          v-model="password"
-          type="password"
-          placeholder="Password"
-          required
-          class="input mb-4"
-        />
+  <div class="fixed inset-0 flex items-center justify-center background">
+    <form @submit.prevent="login">
+      <fieldset class="p-5">
+        <legend><h1>Login</h1></legend>
+        <input v-model="email" type="email" placeholder="Email" required class="input" />
+        <input v-model="password" type="password" placeholder="Password" required class="input" />
         <button type="submit" class="btn">Login</button>
         <button type="button" @click="close" class="btn ml-2">Cancel</button>
-      </form>
-    </div>
+      </fieldset>
+    </form>
   </div>
 </template>
 
@@ -25,7 +19,6 @@ const emit = defineEmits(['close'])
 
 const missClickEventListener = (element) => {
   element.addEventListener('click', (event) => {
-    console.log(event.target)
     if (event.target === element) {
       element.removeEventListener('click', null)
       emit('close')
@@ -50,9 +43,9 @@ const login = () => {
 
 <style scoped>
 .input {
-  @apply border rounded w-full py-2 px-3;
+  @apply w-full mb-3;
 }
 .btn {
-  @apply bg-blue-500 text-white py-2 px-4 rounded;
+  @apply py-2 px-4;
 }
 </style>

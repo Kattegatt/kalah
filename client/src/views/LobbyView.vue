@@ -1,7 +1,11 @@
 <template>
-  <div class="flex items-center justify-center"></div>
+  <div class="flex items-center justify-center">
+    <GeneratedLink />
+  </div>
 </template>
 
-<script setup></script>
+<script setup>
+import GeneratedLink from '../components/GeneratedLink.vue'
+</script>
 
 <style scoped></style>

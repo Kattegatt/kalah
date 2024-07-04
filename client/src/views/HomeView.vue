@@ -1,9 +1,17 @@
 <template>
-  <div class="flex gap-2">
+  <div class="flex justify-end gap-2">
     <button @click="showRegisterModal = true" class="btn">Register</button>
     <button @click="showLoginModal = true" class="btn">Login</button>
     <RegisterModal v-if="showRegisterModal" @close="showRegisterModal = false" />
     <LoginModal v-if="showLoginModal" @close="showLoginModal = false" />
+  </div>
+  <div class="flex items-center justify-center p-2 m-8">
+    <h1 class="font-bold big text-2xl">kalah</h1>
+  </div>
+  <div class="flex flex-col gap-3 items-center justify-center">
+    <button class="menu-button">Single Player</button>
+    <button class="menu-button">Online</button>
+    <button class="menu-button">Tutorial</button>
   </div>
 </template>
 
@@ -21,6 +29,9 @@ const showLoginModal = ref(false)
 
 <style scoped>
 .btn {
-  @apply bg-blue-500 text-white py-2 px-4 rounded;
+  @apply py-2 px-4;
+}
+.menu-button {
+  width: 180px;
 }
 </style>

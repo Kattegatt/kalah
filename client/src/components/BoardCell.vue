@@ -1,11 +1,11 @@
 <template>
-  <div
+  <button
     :class="[calcStyle, { disabled: cellZero || !clickable, redBorder: landSignal }]"
-    class="rounded-xl flex items-center justify-center"
+    class="flex items-center justify-center"
     @click="emitClick"
   >
     {{ cellValue }}
-  </div>
+  </button>
 </template>
 
 <script setup>
@@ -65,14 +65,6 @@ const emitClick = () => {
 
 .big {
   @apply w-16 h-36;
-}
-
-.x {
-  @apply bg-blue-300;
-}
-
-.y {
-  @apply bg-green-300;
 }
 
 .redBorder {
