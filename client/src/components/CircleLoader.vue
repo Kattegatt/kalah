@@ -12,7 +12,7 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: '#3498db'
+    default: '#454138'
   },
   speed: {
     type: String,
@@ -24,8 +24,7 @@ const loaderStyle = computed(() => ({
   width: props.size,
   height: props.size,
   border: `5px solid ${props.color}`,
-  borderTop: `5px solid transparent`,
-  animation: `spin ${props.speed} linear infinite`
+  borderTop: `5px solid transparent`
 }))
 </script>
 
@@ -34,6 +33,7 @@ const loaderStyle = computed(() => ({
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;
+  animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
