@@ -1,15 +1,18 @@
 <template>
-  <form v-if="inviteLink" class="yorha-border container">
+  <form class="yorha-border container">
     <figure class>{{ inviteLink }}</figure>
     <button type="button" @click="copyLink" class="w-1/2">Copy</button>
   </form>
-  <CircleLoader v-if="!inviteLink" />
 </template>
 
 <script setup>
-import CircleLoader from './CircleLoader.vue'
 import { ref, onBeforeMount } from 'vue'
 import { socket, joinGame, createGame } from '@/socket'
+
+const emit = defineEmits(['inviteLink'])
+const emitLink = (val) => {
+  emit('link', val)
+}
 
 let inviteLink = ref('')
 
@@ -18,17 +21,15 @@ onBeforeMount(() => {
   if (link.split('?').pop().startsWith('game=')) {
     const gameId = link.split('game=').pop()
     joinGame(gameId)
-    // ROUTE TO THE GAME LOGIC
   } else {
-    createInviteLink()
     createGame()
   }
 })
 
 socket.on('createdGame', (gameId) => {
   console.log(`game created with id: ${gameId}`)
-  // socketState.gameId = gameId
   inviteLink.value = createInviteLink(gameId)
+  emitLink(inviteLink.value)
   joinGame(gameId)
 })
 
@@ -42,9 +43,7 @@ function createInviteLink(id) {
 function copyLink() {
   navigator.clipboard
     .writeText(inviteLink.value)
-    .then(() => {
-      console.log('Link copied to clipboard')
-    })
+    .then(() => {})
     .catch((err) => {
       console.error('Failed to copy link: ', err)
     })

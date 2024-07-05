@@ -61,7 +61,7 @@
 import { ref, onMounted } from 'vue'
 import { useGameStore } from '../stores/game'
 import BoardCell from './BoardCell.vue'
-import { socket, joinGame, createGame } from '@/socket'
+import { socket } from '@/socket'
 
 const gameStore = useGameStore()
 const gameState = gameStore.$state.gameState
@@ -69,9 +69,6 @@ const isMyTurn = ref(true)
 const thisUserSide = ref(localStorage.getItem('kalah_user'))
 
 onMounted(() => {
-  createGame()
-  // joinGame(gameId.value)
-
   socket.on('returnState', (newGameState) => {
     updateGameState(newGameState)
   })
@@ -84,10 +81,6 @@ onMounted(() => {
 const handleMove = (cellData) => {
   isMyTurn.value = false
   socket.emit('move', { gameState, cellData })
-}
-
-const resetGame = () => {
-  gameStore.resetGame()
 }
 
 const updateGameState = (data) => {

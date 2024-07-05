@@ -42,8 +42,6 @@ const io = new Server(server, {
 const games = new Array();
 
 io.on("connection", (socket) => {
-  console.log("SOCKET ID ON CONNECTION", socket.id);
-  console.log("New client connected");
   // Create Game
   socket.on("createGame", async () => {
     // const newUuid = uuid();
@@ -51,39 +49,64 @@ io.on("connection", (socket) => {
     // console.log("socket.on ~ gameId:", mUUID4);
 
     const dbGame = await GameService.create();
-    console.log("socket.on ~ dbGame _id:", dbGame._id);
     const gameId = dbGame._id.toString();
     const game = new Game(gameId);
-    game.addPlayer(socket.id);
-    socket.emit("createdGame", gameId);
     games.push(game);
+
+    socket.emit("createdGame", gameId);
   });
 
   socket.on("joinGame", (gameId) => {
-    socket.join(gameId);
-    console.log(`socket with id ${socket.id} joined game ${gameId}`);
-    const users = io.sockets.adapter.rooms.get(gameId);
-    console.log("Users in the game", users);
+    const game = games.find((game) => game.id === gameId);
 
-    // if sockets in room === 2
-    // emit startGame
-    io.to(gameId).emit("newPlayer", { playerId: socket.id });
+    const players = io.sockets.adapter.rooms.get(gameId);
+    if (!players) {
+      socket.join(gameId);
+      game.addPlayer(socket.id);
+      console.log("Player added to game: ", game.players);
+
+      console.log(`socket ${socket.id} joined game ${gameId}`);
+      io.to(gameId).emit("newPlayer", { playerId: socket.id });
+    } else {
+      switch (players.size) {
+        case 1:
+          // adding invited player to the room and Game instance
+          socket.join(gameId);
+          game.addPlayer(socket.id);
+          game.switchPlayer(game.getPlayersArray[0]);
+          io.to(gameId).emit("newPlayer", { playerId: socket.id });
+          io.to(gameId).emit("startGame", gameId);
+          break;
+        case 2:
+          throw new Error("More than 2 players in the room");
+      }
+    }
   });
 
   socket.on("move", async ({ gameState, cellData }) => {
-    let game = games.find((game) => game.players.includes(socket.id));
-    const gameId = game.id;
-    console.log("games before move", games[0].gameState);
-    await game.handleMove({ gameState, cellData });
-    console.log("games after move", games[0].gameState);
-    const currentPlayer = game.getCurrentPlayer();
-    const newGameState = game.getGameState();
-    console.log("socket.on ~ newGameState:", newGameState);
-    io.to(gameId).emit("returnState", newGameState);
-    io.to(gameId).emit("currentPlayer", currentPlayer);
+    // console.log("typeof socket id on Move: ", typeof socket.id);
+    // console.log("Games on Move: ", games);
+    let game = games.find((game) => game.players.has(socket.id));
+    console.log("game:", game);
+    console.log("typeof game:", typeof game);
+
+    if (!game) {
+      throw new Error("Game is not exist or been deleted");
+    } else {
+      const gameId = game.id;
+      await game.handleMove({ gameState, cellData });
+
+      const currentPlayer = game.getCurrentPlayer();
+      const newGameState = game.getGameState();
+      console.log("socket.on ~ newGameState:", newGameState);
+
+      io.to(gameId).emit("returnState", newGameState);
+      io.to(gameId).emit("currentPlayer", currentPlayer);
+    }
   });
 
   socket.on("disconnect", () => {
+    // ADD DELETE GAME FROM ARR HANDLING
     console.log("Client disconnected");
   });
 });

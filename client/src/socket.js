@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { io } from 'socket.io-client'
+import router from './router'
 
 export const socketState = reactive({
   gameId: null,
@@ -25,6 +26,11 @@ socket.on('disconnect', () => {
 
 socket.on('newPlayer', ({ playerId }) => {
   console.log(`Player with id ${playerId} joined the game`)
+})
+
+socket.on('startGame', (id) => {
+  console.log('GAME STARTED')
+  router.push({ path: '/game', query: { id } })
 })
 
 export const joinGame = (gameId) => {

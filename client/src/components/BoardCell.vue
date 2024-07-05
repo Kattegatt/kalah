@@ -59,16 +59,12 @@ const emitClick = () => {
   @apply w-16 h-16;
 }
 
-.small:hover {
-  border: 2px solid white;
-}
-
 .big {
   @apply w-16 h-36;
 }
 
 .redBorder {
-  border: 2px solid red;
+  border: 2px solid #454138;
 }
 
 .disabled {
