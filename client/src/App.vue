@@ -1,19 +1,21 @@
 <template>
+  <div class="absolute top-6 w-full z-20">
+    <div class="pattern">
+      <div class="container">
+        <div class="pattern-inner"></div>
+      </div>
+    </div>
+  </div>
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/game">Game</RouterLink>
       <RouterLink to="/lobby">Lobby</RouterLink>
     </nav>
-    <div class="pattern">
-      <div class="container">
-        <div class="pattern-inner"></div>
-      </div>
-    </div>
   </header>
   <main>
     <RouterView />
-    <div class="absolute bottom-0 w-full">
+    <div class="absolute bottom-0 w-full z-50">
       <div class="pattern">
         <div class="container">
           <div class="pattern-inner"></div>

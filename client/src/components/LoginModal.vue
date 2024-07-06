@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 flex items-center justify-center background">
+  <div class="fixed inset-0 flex items-center justify-center yorha-background z-10 background">
     <form @submit.prevent="login">
       <fieldset class="p-5">
         <legend><h1>Login</h1></legend>
