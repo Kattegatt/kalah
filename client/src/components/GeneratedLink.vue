@@ -8,8 +8,12 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue'
 import { socket, joinGame, createGame } from '@/socket'
+import { usePlayerStore } from '../stores/player'
 
-const emit = defineEmits(['inviteLink'])
+const playerStore = usePlayerStore()
+const playerState = playerStore.$state.userState
+
+const emit = defineEmits(['link'])
 const emitLink = (val) => {
   emit('link', val)
 }
@@ -21,16 +25,24 @@ onBeforeMount(() => {
   if (link.split('?').pop().startsWith('game=')) {
     const gameId = link.split('game=').pop()
     joinGame(gameId)
+    // Set Player Side to y (second player)
+    playerStore.changePlayerSide('y')
   } else {
     createGame()
   }
 })
+
+// socket.on('currentPlayer', (playerId) => {
+//   if (playerId === socket.id) playerState.activeTurn = true
+// })
 
 socket.on('createdGame', (gameId) => {
   console.log(`game created with id: ${gameId}`)
   inviteLink.value = createInviteLink(gameId)
   emitLink(inviteLink.value)
   joinGame(gameId)
+  // Set Player Side to x (first player)
+  playerStore.changePlayerSide('x')
 })
 
 function createInviteLink(id) {

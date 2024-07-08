@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute top-6 w-full z-20">
+  <div class="static top-6 w-full z-20">
     <div class="pattern">
       <div class="container">
         <div class="pattern-inner"></div>

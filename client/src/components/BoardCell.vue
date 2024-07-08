@@ -1,6 +1,6 @@
 <template>
   <button
-    :class="[calcStyle, { disabled: cellZero || !clickable, redBorder: landSignal }]"
+    :class="[calcStyle, { disabled: cellZero || !clickable, landIndicator: landSignal }]"
     class="flex items-center justify-center"
     @click="emitClick"
   >
@@ -39,7 +39,7 @@ const calcStyle = computed(() => `${size.value} ${type.value}`)
 const cellValue = computed(() => Object.values(cell.value)[0])
 const cellZero = computed(() => cellValue.value === 0)
 
-let clickable = computed(() => userSide.value === type.value && turn)
+let clickable = computed(() => turn.value && userSide.value === type.value)
 
 watch(cellValue, () => {
   landSignal.value = true
@@ -63,8 +63,8 @@ const emitClick = () => {
   @apply w-16 h-36;
 }
 
-.redBorder {
-  border: 2px solid #454138;
+.land-indicator {
+  border: 2px solid #f39614;
 }
 
 .disabled {

@@ -62,10 +62,8 @@ io.on("connection", (socket) => {
     const players = io.sockets.adapter.rooms.get(gameId);
     if (!players) {
       socket.join(gameId);
-      game.addPlayer(socket.id);
-      console.log("Player added to game: ", game.players);
-
       console.log(`socket ${socket.id} joined game ${gameId}`);
+      game.addPlayer(socket.id);
       io.to(gameId).emit("newPlayer", { playerId: socket.id });
     } else {
       switch (players.size) {
@@ -73,9 +71,14 @@ io.on("connection", (socket) => {
           // adding invited player to the room and Game instance
           socket.join(gameId);
           game.addPlayer(socket.id);
-          game.switchPlayer(game.getPlayersArray[0]);
+          game.switchPlayer(game.getPlayersArray()[0]);
+
           io.to(gameId).emit("newPlayer", { playerId: socket.id });
           io.to(gameId).emit("startGame", gameId);
+          // Game creator have first turn
+          io.to(gameId).emit("currentPlayer", {
+            playerId: game.getCurrentPlayer(),
+          });
           break;
         case 2:
           throw new Error("More than 2 players in the room");

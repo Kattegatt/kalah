@@ -1,6 +1,7 @@
 <template>
   <div class="fixed inset-0 flex items-center justify-center z-10">
     <div class="modal-content flex flex-col gap-4 p-6 bg-white rounded-lg shadow-lg">
+      <fieldset></fieldset>
       <h2 class="text-xl font-bold text-center">Game Rules</h2>
       <ul class="list-disc list-inside">
         <li>
@@ -37,7 +38,7 @@ const close = () => {
 }
 
 .modal-content {
-  background-color: bisque;
+  background-color: #d1cdb7;
   max-width: 500px;
   width: 100%;
 }

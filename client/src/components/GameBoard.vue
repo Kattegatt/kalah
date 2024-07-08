@@ -58,15 +58,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useGameStore } from '../stores/game'
+import { usePlayerStore } from '../stores/player'
 import BoardCell from './BoardCell.vue'
 import { socket } from '@/socket'
 
+const playerStore = usePlayerStore()
+const playerState = playerStore.$state.userState
+
 const gameStore = useGameStore()
 const gameState = gameStore.$state.gameState
-const isMyTurn = ref(true)
-const thisUserSide = ref(localStorage.getItem('kalah_user'))
+
+const isMyTurn = computed(() => {
+  return playerState.activeTurn
+})
+const thisUserSide = computed(() => {
+  return playerState.side
+})
 
 onMounted(() => {
   socket.on('returnState', (newGameState) => {
@@ -74,12 +83,12 @@ onMounted(() => {
   })
 
   socket.on('currentPlayer', (playerId) => {
-    if (playerId === socket.id) isMyTurn.value = true
+    if (playerId === socket.id) playerState.activeTurn = true
   })
 })
 
 const handleMove = (cellData) => {
-  isMyTurn.value = false
+  playerStore.setTurnFalse()
   socket.emit('move', { gameState, cellData })
 }
 
