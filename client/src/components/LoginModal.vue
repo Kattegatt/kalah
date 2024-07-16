@@ -5,7 +5,7 @@
         <legend><h1>Login</h1></legend>
         <input v-model="email" type="email" placeholder="Email" required class="input" />
         <input v-model="password" type="password" placeholder="Password" required class="input" />
-        <button type="submit" class="btn">Login</button>
+        <button type="submit" class="btn" @click="login">Login</button>
         <button type="button" @click="close" class="btn ml-2">Cancel</button>
       </fieldset>
     </form>
