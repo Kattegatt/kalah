@@ -11,7 +11,7 @@ import { socket, joinGame, createGame } from '@/socket'
 import { usePlayerStore } from '../stores/player'
 
 const playerStore = usePlayerStore()
-const playerState = playerStore.$state.userState
+// const playerState = playerStore.$state.userState
 
 const emit = defineEmits(['link'])
 const emitLink = (val) => {

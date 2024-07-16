@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useGameStore } from '../stores/game'
 import { usePlayerStore } from '../stores/player'
 import BoardCell from './BoardCell.vue'

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export const usePlayerStore = defineStore('player', {
   state: () => ({
-    userState: { side: null, activeTurn: false }
+    userState: { side: null, activeTurn: false, isSignedIn: false }
   }),
   actions: {
     changePlayerSide(newSide) {

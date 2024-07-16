@@ -90,8 +90,6 @@ io.on("connection", (socket) => {
     // console.log("typeof socket id on Move: ", typeof socket.id);
     // console.log("Games on Move: ", games);
     let game = games.find((game) => game.players.has(socket.id));
-    console.log("game:", game);
-    console.log("typeof game:", typeof game);
 
     if (!game) {
       throw new Error("Game is not exist or been deleted");
