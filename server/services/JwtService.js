@@ -13,6 +13,16 @@ class JwtService {
   async verifyAccessToken(token) {
     return jwt.verify(token, secret);
   }
+
+  async verifyRefreshToken(token) {
+    return jwt.verify(token, refreshSecret);
+  }
+
+  async getTokens(payload) {
+    const accessToken = this.generateAccessToken(payload);
+    const refreshToken = this.generateRefreshToken(payload);
+    return { accessToken, refreshToken };
+  }
 }
 
 export default new JwtService();
