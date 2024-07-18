@@ -1,8 +1,7 @@
 <template>
   <div class="fixed inset-0 flex items-center justify-center z-10">
     <div class="modal-content flex flex-col gap-4 p-6 bg-white rounded-lg shadow-lg">
-      <fieldset></fieldset>
-      <h2 class="text-xl font-bold text-center">Game Rules</h2>
+      <h2 class="text-xl font-bold text-center mb-4">Game Rules</h2>
       <ul class="list-disc list-inside">
         <li>
           Moving counter-clockwise, the player deposits one of the stones in each pocket until the
