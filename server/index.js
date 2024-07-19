@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import userRouter from "./routers/UserRouter.js";
 import gameRouter from "./routers/GameRouter.js";
+import authRouter from "./routers/AuthRouter.js";
 import GameService from "./services/GameService.js";
 import Game from "./game_logic/Game.js";
 
@@ -33,6 +34,7 @@ const server = http.createServer(app);
 
 app.use("/users", userRouter);
 app.use("/games", gameRouter);
+app.use("/auth", authRouter);
 
 const io = new Server(server, {
   cors: {

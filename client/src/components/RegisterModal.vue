@@ -13,7 +13,7 @@
           required
           class="input"
         />
-        <button type="submit" @click="register" class="btn">Register</button>
+        <button type="submit" class="btn">Register</button>
         <button type="button" @click="$emit('close')" class="btn ml-2">Cancel</button>
       </fieldset>
     </form>
@@ -22,7 +22,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-const emit = defineEmits(['close'])
+import { baseUrl, endpoints } from '../utils/api/endpoints'
+
+const emit = defineEmits(['close', 'signedIn'])
 
 const missClickEventListener = (element) => {
   element.addEventListener('click', (event) => {
@@ -44,17 +46,17 @@ const repeatPassword = ref('')
 
 const register = async () => {
   // validation of required inputs nedded
-  if (this.password !== this.repeatPassword) {
+  if (password.value !== repeatPassword.value) {
     alert('Passwords do not match')
     return
   }
 
-  const url = 'http://localhost:5050/users'
+  const url = baseUrl + endpoints.createUser
 
   const body = JSON.stringify({
-    username: this.username,
-    email: this.email,
-    password: this.password
+    username: username.value,
+    email: email.value,
+    password: password.value
   })
 
   try {
@@ -66,15 +68,14 @@ const register = async () => {
       body: body
     })
     if (response.ok) {
-      const data = await response.json()
-      const { token, refreshToken } = data
+      const token = await response.json()
+      console.log('register ~ token:', token)
       localStorage.setItem('dk_kalah_access_token', JSON.stringify(token))
-      localStorage.setItem('dk_kalah_refresh_token', JSON.stringify(refreshToken))
-      this.$emit('close')
+      emit('signedIn')
+      emit('close')
     }
   } catch (error) {
     console.log(error.message)
-    // this.handleError
   }
 }
 </script>
