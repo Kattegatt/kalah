@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import http from "http";
 import { Server } from "socket.io";
@@ -8,8 +9,7 @@ import userRouter from "./routers/UserRouter.js";
 import gameRouter from "./routers/GameRouter.js";
 import GameService from "./services/GameService.js";
 import Game from "./game_logic/Game.js";
-import { uuid } from "./services/generate.js";
-import MUUID from "uuid-mongodb";
+
 dotenv.config();
 
 const DB_URL = `mongodb+srv://admin:${process.env.DB_PASS}@cluster0.vuaacml.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`;
@@ -18,12 +18,14 @@ const PORT = process.env.PORT || 5050;
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
   cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 

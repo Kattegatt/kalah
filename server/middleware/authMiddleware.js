@@ -26,15 +26,10 @@ class AuthMiddleware {
       next();
     }
     try {
-      const token = req.headers.authorization.split(" ")[1];
-      if (!token) {
-        return res.status(403).json({ message: "Not authorized" });
-      }
-      const decodedData = await jwtService.verifyRefreshToken(token);
-      console.log(
-        "AuthMiddleware ~ verifyRefreshToken ~ decodedData:",
-        decodedData
-      );
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) return res.sendStatus(401);
+      const decodedData = await jwtService.verifyRefreshToken(refreshToken);
+
       req.user = decodedData;
       next();
     } catch (error) {

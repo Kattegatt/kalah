@@ -26,9 +26,13 @@ router.get("/refresh", AuthMiddleware.verifyRefreshToken, async (req, res) => {
   try {
     const { _id, username, email } = req.user;
     const payload = { _id, username, email };
-    const tokens = await JwtService.getTokens(payload);
-    console.log("router.get ~ tokens:", tokens);
-    res.status(200).json(tokens);
+    const { token, refreshToken } = await JwtService.getTokens(payload);
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
+    res.status(200).json(token);
   } catch (error) {
     res.status(500).json(error.message);
   }

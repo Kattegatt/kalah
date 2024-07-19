@@ -10,8 +10,14 @@ class UserController {
       return;
     }
     try {
-      const tokens = await UserService.create(req.body);
-      res.status(201).json(tokens);
+      const { token, refreshToken } = await UserService.create(req.body);
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+      });
+
+      res.status(201).json(token);
     } catch (error) {
       console.log(error.message);
       if (error.message === "User already exists") {
@@ -28,8 +34,13 @@ class UserController {
       return;
     }
     try {
-      const tokens = await UserService.login(req.body);
-      res.status(200).json(tokens);
+      const { token, refreshToken } = await UserService.login(req.body);
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+      });
+      res.status(200).json(token);
     } catch (error) {
       console.log(error.message);
       res.status(500).json(error.message);
