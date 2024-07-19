@@ -22,11 +22,13 @@ router.post(
   [check("email", "Email can not be empty").notEmpty()],
   UserController.login
 );
-router.get("/refresh", AuthMiddleware.verifyRefreshToken, (req, res) => {
+router.get("/refresh", AuthMiddleware.verifyRefreshToken, async (req, res) => {
   try {
-    const { payload } = req.user;
-    const tokens = JwtService.getTokens(payload);
-    res.json(tokens);
+    const { _id, username, email } = req.user;
+    const payload = { _id, username, email };
+    const tokens = await JwtService.getTokens(payload);
+    console.log("router.get ~ tokens:", tokens);
+    res.status(200).json(tokens);
   } catch (error) {
     res.status(500).json(error.message);
   }

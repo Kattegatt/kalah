@@ -19,8 +19,8 @@ class JwtService {
   }
 
   async getTokens(payload) {
-    const accessToken = this.generateAccessToken(payload);
-    const refreshToken = this.generateRefreshToken(payload);
+    const accessToken = await this.generateAccessToken(payload);
+    const refreshToken = await this.generateRefreshToken(payload);
     return { accessToken, refreshToken };
   }
 }

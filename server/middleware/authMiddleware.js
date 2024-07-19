@@ -30,7 +30,11 @@ class AuthMiddleware {
       if (!token) {
         return res.status(403).json({ message: "Not authorized" });
       }
-      const decodedData = jwtService.verifyRefreshToken(token);
+      const decodedData = await jwtService.verifyRefreshToken(token);
+      console.log(
+        "AuthMiddleware ~ verifyRefreshToken ~ decodedData:",
+        decodedData
+      );
       req.user = decodedData;
       next();
     } catch (error) {
