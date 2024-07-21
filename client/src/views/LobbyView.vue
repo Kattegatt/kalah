@@ -5,7 +5,7 @@
       <button class="w-44">Find Game</button>
       <button class="w-44" @click="localLobbyOpened = true">Local</button>
     </div>
-    <WinRecords />
+    <!-- <WinRecords /> -->
     <PrivateGame v-if="localLobbyOpened" />
   </div>
 </template>

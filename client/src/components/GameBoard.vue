@@ -65,7 +65,7 @@ import BoardCell from './BoardCell.vue'
 import { socket } from '@/socket'
 
 const playerStore = usePlayerStore()
-const playerState = playerStore.$state.userState
+const playerState = playerStore.$state.playerState
 
 const gameStore = useGameStore()
 const gameState = gameStore.$state.gameState
