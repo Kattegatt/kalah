@@ -12,8 +12,12 @@ class AuthMiddleware {
       if (!token) {
         return res.status(403).json({ message: "Not authorized" });
       }
-      const decodedData = jwtService.verifyAccessToken(token);
-      req.user = decodedData;
+      try {
+        const decodedData = jwtService.verifyAccessToken(token);
+        req.user = decodedData;
+      } catch (error) {
+        return res.status(403).json({ message: "Not authorized" });
+      }
       next();
     } catch (error) {
       console.log(error);
@@ -27,6 +31,7 @@ class AuthMiddleware {
     }
     try {
       const refreshToken = req.cookies.refreshToken;
+
       if (!refreshToken) return res.sendStatus(401);
       const decodedData = await jwtService.verifyRefreshToken(refreshToken);
 

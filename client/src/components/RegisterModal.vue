@@ -70,7 +70,7 @@ const register = async () => {
     if (response.ok) {
       const token = await response.json()
       console.log('register ~ token:', token)
-      localStorage.setItem('dk_kalah_access_token', JSON.stringify(token))
+      localStorage.setItem('dk_kalah_access_token', token)
       emit('signedIn')
       emit('close')
     }

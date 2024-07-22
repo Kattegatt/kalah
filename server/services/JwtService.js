@@ -11,16 +11,29 @@ class JwtService {
     return jwt.sign(payload, refreshSecret, { expiresIn: "30d" });
   }
   async verifyAccessToken(token) {
-    return jwt.verify(token, secret);
+    try {
+      const decoded = jwt.verify(token, secret);
+      return decoded;
+    } catch (error) {
+      return new Error("Invalid token");
+    }
   }
 
   async verifyRefreshToken(token) {
-    return jwt.verify(token, refreshSecret);
+    try {
+      const decoded = jwt.verify(token, refreshSecret);
+      return decoded;
+    } catch (error) {
+      throw new Error("Invalid token");
+    }
   }
 
   async getTokens(payload) {
     const accessToken = await this.generateAccessToken(payload);
     const refreshToken = await this.generateRefreshToken(payload);
+    if (!accessToken || !refreshToken) {
+      throw new Error("Invalid token");
+    }
     return { accessToken, refreshToken };
   }
 }

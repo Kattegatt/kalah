@@ -13,44 +13,51 @@
       <RouterLink to="/lobby">Lobby</RouterLink>
     </nav>
   </header>
-  <main>
+  <CircleLoader class="absolute top-1/2 left-1/2" v-if="!canMount" />
+  <main v-if="canMount">
     <RouterView />
     <!-- Bottom pattern -->
-    <div class="absolute bottom-0 w-full z-50">
-      <div class="pattern">
-        <div class="container">
-          <div class="pattern-inner"></div>
-        </div>
+  </main>
+  <div class="absolute bottom-0 w-full z-50">
+    <div class="pattern">
+      <div class="container">
+        <div class="pattern-inner"></div>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 
 <script setup>
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { baseUrl, endpoints } from './utils/api/endpoints'
 import { usePlayerStore } from './stores/player'
+import CircleLoader from './components/CircleLoader.vue'
 
-const playerStore = usePlayerStore()
-const playerState = playerStore.$state.playerState
+const canMount = ref(false)
 
 onBeforeMount(async () => {
+  const playerStore = usePlayerStore()
+  const playerState = playerStore.$state.playerState
   try {
     if (checkToken()) {
       const verified = await verifyToken()
       console.log('onBeforeMount ~ verified token:', verified)
       if (verified) {
         playerState.isSignedIn = true
+        canMount.value = true
         return
       }
     }
 
     const newToken = await refreshToken()
-    localStorage.setItem('dk_kalah_access_token', JSON.stringify(newToken))
-    playerState.isSignedIn = true
+    if (newToken) {
+      localStorage.setItem('dk_kalah_access_token', newToken)
+      playerState.isSignedIn = true
+    }
   } catch (error) {
-    console.log(error)
+    console.log('onBeforeMount error', error)
   }
+  canMount.value = true
 })
 
 const checkToken = () => {
@@ -66,7 +73,7 @@ const verifyToken = async () => {
 
   const headers = {
     'Content-Type': 'application/json',
-    authorization: 'Bearer' + localStorage.getItem('dk_kalah_access_token')
+    authorization: 'Bearer' + ' ' + localStorage.getItem('dk_kalah_access_token')
   }
   try {
     const response = await fetch(url, {
@@ -74,7 +81,9 @@ const verifyToken = async () => {
       headers: headers
     })
     if (response.ok) {
+      console.log('response ok')
       const newToken = await response.json()
+
       if (newToken) {
         return newToken
       } else {
@@ -95,14 +104,15 @@ const refreshToken = async () => {
     const response = await fetch(url)
     if (response.ok) {
       const newToken = await response.json()
+      console.log('refreshToken ~ newToken:', newToken)
       if (newToken) {
-        localStorage.setItem('dk_kalah_access_token', JSON.stringify(newToken))
+        localStorage.setItem('dk_kalah_access_token', newToken)
       } else {
         throw new Error('Token is not found')
       }
     }
   } catch (error) {
-    console.log(error)
+    console.log('refresh token error', error)
   }
 }
 </script>
