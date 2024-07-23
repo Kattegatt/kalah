@@ -4,6 +4,7 @@
     <div v-if="!isLobbyOpened" class="flex flex-col gap-3 items-center justify-center">
       <button class="w-44">Find Game</button>
       <button class="w-44" @click="localLobbyOpened = true">Local</button>
+      <button class="w-44" @click="toMenuRoute">Back To Menu</button>
     </div>
     <!-- <WinRecords /> -->
     <PrivateGame v-if="localLobbyOpened" />
@@ -12,11 +13,16 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-
+import router from '../router/index.js'
 import PrivateGame from '../components/PrivateGame.vue'
 import WinRecords from '../components/WinRecords.vue'
+
 const localLobbyOpened = ref(false)
 const findGameOpened = ref(false)
+
+const toMenuRoute = () => {
+  router.push({ path: '/' })
+}
 
 const isLobbyOpened = computed(() => localLobbyOpened.value || findGameOpened.value)
 </script>

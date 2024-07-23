@@ -8,7 +8,7 @@
   </div>
   <div class="flex flex-col gap-3 items-center justify-center">
     <button class="menu-button">Single Player</button>
-    <button v-if="isSignedIn" class="menu-button">Online</button>
+    <button v-if="isSignedIn" class="menu-button" @click="lobbyRoute">Online</button>
     <button @click="showTutorial = true" class="menu-button">Tutorial</button>
   </div>
   <RegisterModal
@@ -26,7 +26,11 @@ import RegisterModal from '../components/RegisterModal.vue'
 import LoginModal from '../components/LoginModal.vue'
 import TutorialModal from '../components/TutorialModal.vue'
 import { usePlayerStore } from '../stores/player'
+import router from '../router/index.js'
 
+const lobbyRoute = () => {
+  router.push({ path: '/lobby' })
+}
 const playerStore = usePlayerStore()
 const playerState = playerStore.$state.playerState
 const isSignedIn = computed(() => playerState.isSignedIn)
