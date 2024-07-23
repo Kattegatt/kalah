@@ -12,13 +12,27 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
 import router from '../router/index.js'
 import PrivateGame from '../components/PrivateGame.vue'
 import WinRecords from '../components/WinRecords.vue'
+import { socket, joinGame, createGame } from '@/socket'
+import { usePlayerStore } from '../stores/player'
 
 const localLobbyOpened = ref(false)
 const findGameOpened = ref(false)
+
+onBeforeMount(() => {
+  const playerStore = usePlayerStore()
+
+  const link = window.location.href
+  if (link.split('?').pop().startsWith('game=')) {
+    const gameId = link.split('game=').pop()
+    joinGame(gameId)
+    // Set Player Side to y (second player)
+    playerStore.changePlayerSide('y')
+  }
+})
 
 const toMenuRoute = () => {
   router.push({ path: '/' })
