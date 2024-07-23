@@ -103,8 +103,12 @@ io.on("connection", (socket) => {
 
       const currentPlayer = game.getCurrentPlayer();
       const newGameState = game.getGameState();
-      console.log("socket.on ~ newGameState:", newGameState);
-
+      if (await game.isGameOver()) {
+        console.log("game over");
+        io.to(gameId).emit("returnState", newGameState);
+        io.to(gameId).emit("endGame");
+        return;
+      }
       io.to(gameId).emit("returnState", newGameState);
       io.to(gameId).emit("currentPlayer", currentPlayer);
     }

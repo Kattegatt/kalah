@@ -16,7 +16,7 @@ import { ref, computed, onBeforeMount } from 'vue'
 import router from '../router/index.js'
 import PrivateGame from '../components/PrivateGame.vue'
 import WinRecords from '../components/WinRecords.vue'
-import { socket, joinGame, createGame } from '@/socket'
+import { joinGame } from '@/socket'
 import { usePlayerStore } from '../stores/player'
 
 const localLobbyOpened = ref(false)

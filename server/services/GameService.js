@@ -1,5 +1,4 @@
 import GameModel from "../db_models/Game.js";
-GameModel.create();
 class GameService {
   async create(game) {
     try {
