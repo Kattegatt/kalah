@@ -66,6 +66,8 @@ const initializeWebsockets = (server) => {
           console.log("game over");
           io.to(gameId).emit("returnState", newGameState);
           io.to(gameId).emit("endGame");
+          // delete game from array
+          games.splice(games.indexOf(game), 1);
           return;
         }
         io.to(gameId).emit("returnState", newGameState);
