@@ -1,3 +1,8 @@
+{
+  html {
+    font-size: 10px;
+  }
+}
 body {
   background-color: #d1cdb7;
   -webkit-background-size: 0.3rem 0.3rem;
@@ -257,7 +262,7 @@ button:disabled,
 button:not(:disabled),
 .button {
   padding: 0.5rem;
-  font-size: 1em;
+  font-size: 18px;
   border: none;
   outline: none;
   -webkit-appearance: none;
