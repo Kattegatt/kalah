@@ -7,7 +7,7 @@
     <h1 class="font-bold big text-2xl">kalah</h1>
   </div>
   <div class="flex flex-col gap-3 items-center justify-center">
-    <button class="menu-button">Single Player</button>
+    <button class="menu-button" @click="SinglePlayerRoute">Single Player</button>
     <button v-if="isSignedIn" class="menu-button" @click="lobbyRoute">Online</button>
     <button @click="showTutorial = true" class="menu-button">Tutorial</button>
   </div>
@@ -27,9 +27,14 @@ import LoginModal from '../components/LoginModal.vue'
 import TutorialModal from '../components/TutorialModal.vue'
 import { usePlayerStore } from '../stores/player'
 import router from '../router/index.js'
+import SinglePlayer from './SinglePlayer.vue'
 
 const lobbyRoute = () => {
   router.push({ path: '/lobby' })
+}
+
+const SinglePlayerRoute = () => {
+  router.push({ path: '/singleplayer' })
 }
 const playerStore = usePlayerStore()
 const playerState = playerStore.$state.playerState
@@ -49,6 +54,7 @@ const showTutorial = ref(false)
   @apply py-2 px-4;
 }
 .menu-button {
-  width: 180px;
+  width: 12rem;
+  height: 3rem;
 }
 </style>

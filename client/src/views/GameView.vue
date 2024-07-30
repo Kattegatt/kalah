@@ -3,12 +3,9 @@
     <GameBoard />
   </div>
   <div v-if="isGameOver">
-    <div v-if="isWinner" class="flex flex-col items-center justify-center">
-      <h1 class="text-3xl mb-4 text-center">You won!</h1>
-      <button @click="toMenuRoute">Back to Menu</button>
-    </div>
-    <div v-else class="flex flex-col items-center justify-center">
-      <h1 class="text-3xl mb-4 text-center">You lost!</h1>
+    <div class="flex flex-col items-center justify-center">
+      <h1 v-if="isWinner" class="text-3xl mb-4 text-center">You won!</h1>
+      <h1 v-else class="text-3xl mb-4 text-center">You lost!</h1>
       <button @click="toMenuRoute">Back to Menu</button>
     </div>
   </div>
