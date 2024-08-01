@@ -1,11 +1,5 @@
-// GameBoard.vue
 <template>
   <fieldset class="board-container">
-    <div class="flex items-center mb-4">
-      <label for="grains" class="mr-2">Number of Grains:</label>
-      <input id="grains" type="number" v-model.number="grains" min="1" max="10" class="input" />
-      <button class="btn ml-4" @click="setGrains">Set Grains</button>
-    </div>
     <BoardCell size="big" type="y" :cell="getMainCell('y')" key="mainY"></BoardCell>
     <div class="grid grid-cols-6 gap-4">
       <BoardCell
@@ -24,6 +18,7 @@
         size="small"
         type="x"
         :turn="isMyTurn"
+        userSide="x"
         @move="handleMove"
       ></BoardCell>
     </div>
@@ -33,14 +28,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useSinglePlayerGameStore } from '../stores/singlePlayerGame'
+import { computed, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSinglePlayerGameStore } from '../stores/singlePlayerGame.js'
 import BoardCell from './BoardCell.vue'
 
 const gameStore = useSinglePlayerGameStore()
-const grains = ref(gameStore.grains)
+const { currentPlayer } = storeToRefs(gameStore)
 
 const isMyTurn = computed(() => gameStore.currentPlayer === 'x')
+
+watch(currentPlayer, (newVal, oldVal) => {
+  if (newVal === 'y') {
+    const randomTimeout = Math.floor(Math.random() * 1000) + 1000
+    setTimeout(() => {
+      gameStore.handleBotMove()
+    }, randomTimeout)
+  }
+})
 
 const handleMove = (cellData) => {
   if (isMyTurn.value) {
@@ -62,10 +67,6 @@ const getMainCell = (side) => {
 
 const resetGame = () => {
   gameStore.resetGame()
-}
-
-const setGrains = () => {
-  gameStore.setGrains(grains.value)
 }
 </script>
 

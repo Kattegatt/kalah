@@ -34,23 +34,44 @@
       <div class="flex flex-col items-center justify-center">
         <h1 v-if="isWinner" class="text-3xl mb-4 text-center">You won!</h1>
         <h1 v-else class="text-3xl mb-4 text-center">You lost!</h1>
+        <h1 v-if="isDraw" class="text-3xl mb-4 text-center">It's a draw!</h1>
         <button @click="toMenuRoute">Back to Menu</button>
+        <button>Play Again</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+// In singleplayer game user is always 'x' side
+
 import GameBoard from '../components/SinglePlayerGameBoard.vue'
 import { useSinglePlayerGameStore } from '../stores/singlePlayerGame'
-
-import { ref, onBeforeMount } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ref, onBeforeMount, computed, watch } from 'vue'
 import router from '../router/index.js'
+
+const gameStore = useSinglePlayerGameStore()
 
 const gameStarted = ref(false)
 const grainsValue = ref(2)
 const whichMove = ref(1)
 
+const { isActive } = storeToRefs(gameStore)
+
+const isGameOver = ref(false)
+const isWinner = ref(false)
+const isDraw = ref(false)
+
+watch(isActive, (newVal, oldVal) => {
+  if (newVal === false) {
+    gameStore.calcWinner()
+    isWinner.value = gameStore.getWinner()
+    isDraw.value = gameStore.getIsDraw()
+
+    isGameOver.value = true
+  }
+})
 onBeforeMount(() => {})
 
 const toMenuRoute = () => {
@@ -58,9 +79,10 @@ const toMenuRoute = () => {
 }
 
 const startGame = () => {
-  const gameStore = useSinglePlayerGameStore()
   gameStore.setGrains(grainsValue.value)
-
+  const player = whichMove.value == 1 ? 'x' : 'y'
+  //   gameStore.switchPlayer(player)
+  gameStore.resetGame(player)
   gameStarted.value = true
 }
 </script>

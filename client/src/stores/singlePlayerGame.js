@@ -5,11 +5,37 @@ export const useSinglePlayerGameStore = defineStore('singlePlayerGame', {
   state: () => ({
     gameState: [],
     currentPlayer: 'x',
-    isActive: true,
-    grains: 2
+    winner: false,
+    isDraw: false,
+    isActive: null,
+    grains: 2,
+    _opposites: {
+      0: 12,
+      1: 11,
+      2: 10,
+      3: 9,
+      4: 8,
+      5: 7,
+      12: 0,
+      11: 1,
+      10: 2,
+      9: 3,
+      8: 4,
+      7: 5
+    }
   }),
   actions: {
-    resetGame() {
+    getWinner() {
+      return this.winner
+    },
+    getIsDraw() {
+      return this.isDraw
+    },
+    triggerBotsMove() {
+      this.currentPlayer = 'z'
+      setTimeout(() => (this.currentPlayer = 'y'), 100)
+    },
+    resetGame(player) {
       this.gameState = [
         { x1: this.grains },
         { x2: this.grains },
@@ -26,8 +52,33 @@ export const useSinglePlayerGameStore = defineStore('singlePlayerGame', {
         { y6: this.grains },
         { y7: 0 }
       ]
-      this.currentPlayer = 'x'
+      this.currentPlayer = player ? player : 'x'
       this.isActive = true
+      if (this.currentPlayer == 'y') this.triggerBotsMove()
+    },
+    calcWinner() {
+      if (!this.isGameOver()) {
+        throw new Error('Game is not over')
+      } else {
+        const playerXStore = this.gameState.filter(
+          (cell) => Object.keys(cell)[0].includes('x') && Object.keys(cell)[0].includes('7')
+        )[0]['x7']
+        const playerYStore = this.gameState.filter(
+          (cell) => Object.keys(cell)[0].includes('y') && Object.keys(cell)[0].includes('7')
+        )[0]['y7']
+        if (playerXStore === playerYStore) {
+          this.isDraw = true
+          return
+        }
+        if (playerXStore > playerYStore) {
+          this.winner = 'x'
+          return
+        }
+        if (playerXStore < playerYStore) {
+          this.winner = 'y'
+          return
+        }
+      }
     },
     setGrains(number) {
       this.grains = number
@@ -79,10 +130,11 @@ export const useSinglePlayerGameStore = defineStore('singlePlayerGame', {
       this.gameState = newGameState
       const gameOver = this.isGameOver()
       if (gameOver) {
+        this.collectAllGrains()
         this.isActive = false
       } else if (!extraTurn) {
         this.switchPlayer()
-      }
+      } else if (this.currentPlayer == 'y' && extraTurn) this.triggerBotsMove()
     },
     async handleCapture(state, landedCellKey, storeKey) {
       const storeInd = state.findIndex((obj) => Object.prototype.hasOwnProperty.call(obj, storeKey))
@@ -90,8 +142,7 @@ export const useSinglePlayerGameStore = defineStore('singlePlayerGame', {
         state.findIndex((obj) => Object.prototype.hasOwnProperty.call(obj, landedCellKey))
       )
       const oppositeInd = this._opposites[landedInd]
-
-      const oppositeValue = Object.values(state[oppositeInd])[0]
+      const oppositeValue = parseInt(Object.values(state[oppositeInd])[0])
       const storeValue = parseInt(Object.values(state[storeInd]))
       const oppositeKey = Object.keys(state[oppositeInd])[0]
       const landedOnEmpty = Object.values(state[landedInd])[0] == 1
@@ -105,47 +156,89 @@ export const useSinglePlayerGameStore = defineStore('singlePlayerGame', {
       }
       return state
     },
-    switchPlayer() {
-      this.currentPlayer = this.currentPlayer === 'x' ? 'y' : 'x'
-      if (this.currentPlayer === 'y') {
-        this.handleBotMove()
+    switchPlayer(player) {
+      if (!player) {
+        this.currentPlayer = this.currentPlayer === 'x' ? 'y' : 'x'
+      } else {
+        this.currentPlayer = player
       }
     },
     handleBotMove() {
+      if (this.currentPlayer != 'y') {
+        console.log("Bot can't move, player is not switched")
+        return
+      }
       const botCells = this.gameState.filter(
-        (cell) => Object.keys(cell)[0].startsWith('y') && Object.values(cell)[0] > 0
+        (cell) =>
+          Object.keys(cell)[0].startsWith('y') &&
+          Object.values(cell)[0] > 0 &&
+          !Object.keys(cell)[0].includes('7')
       )
       if (botCells.length > 0) {
-        const botMove = botCells[0]
+        const randomIndex = Math.floor(Math.random() * botCells.length)
+        const botMove = botCells[randomIndex]
         this.handleMove(botMove)
       }
     },
     isGameOver() {
+      return this.isXCellsEmpty() || this.isYCellsEmpty()
+    },
+    collectAllGrains() {
+      if (!this.isXCellsEmpty()) {
+        const xStore = this.gameState.filter(
+          (cell) => Object.keys(cell)[0].includes('x') && Object.keys(cell)[0].includes('7')
+        )
+        console.log('xStore: ', xStore)
+        const xStoreValue = parseInt(Object.values(xStore[0])[0])
+        const xStoreKey = Object.keys(xStore[0])[0]
+        const allXCells = this.gameState.filter(
+          (cell) => Object.keys(cell)[0].includes('x') && !Object.keys(cell)[0].includes('7')
+        )
+        const allXCellsSum = allXCells.reduce(
+          (acc, cell) => acc + parseInt(Object.values(cell)[0]),
+          0
+        )
+        allXCells.forEach((cell) => {
+          Object.values(cell)[0] = 0
+        })
+
+        const sum = allXCellsSum + xStoreValue
+        this.gameState[6] = { [xStoreKey]: sum }
+      }
+      if (!this.isYCellsEmpty()) {
+        const yStore = this.gameState.filter(
+          (cell) => Object.keys(cell)[0].includes('y') && Object.keys(cell)[0].includes('7')
+        )
+        const yStoreValue = parseInt(Object.values(yStore[0])[0])
+        const yStoreKey = Object.keys(yStore[0])[0]
+        const allYCells = this.gameState.filter(
+          (cell) => Object.keys(cell)[0].includes('y') && !Object.keys(cell)[0].includes('7')
+        )
+        const allYCellsSum = allYCells.reduce(
+          (acc, cell) => acc + parseInt(Object.values(cell)[0]),
+          0
+        )
+        allYCells.forEach((cell) => {
+          Object.values(cell)[0] = 0
+        })
+
+        const sum = allYCellsSum + yStoreValue
+        this.gameState[13] = { [yStoreKey]: sum }
+      }
+    },
+    isXCellsEmpty() {
       const playerXCells = this.gameState.filter(
         (cell) => Object.keys(cell)[0].includes('x') && !Object.keys(cell)[0].includes('7')
       )
+      const playerXEmpty = playerXCells.every((cell) => Object.values(cell)[0] === 0)
+      return playerXEmpty
+    },
+    isYCellsEmpty() {
       const playerYCells = this.gameState.filter(
         (cell) => Object.keys(cell)[0].includes('y') && !Object.keys(cell)[0].includes('7')
       )
-
-      const playerXEmpty = playerXCells.every((cell) => Object.values(cell)[0] === 0)
       const playerYEmpty = playerYCells.every((cell) => Object.values(cell)[0] === 0)
-
-      return playerXEmpty || playerYEmpty
-    },
-    _opposites: {
-      0: 12,
-      1: 11,
-      2: 10,
-      3: 9,
-      4: 8,
-      5: 7,
-      12: 0,
-      11: 1,
-      10: 2,
-      9: 3,
-      8: 4,
-      7: 5
+      return playerYEmpty
     }
   }
 })
