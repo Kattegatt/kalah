@@ -1,31 +1,31 @@
 <template>
-  <form
-    v-if="!gameStarted"
-    @submit="startGame"
-    class="flex flex-col items-center justify-center gap-2 p-4"
-  >
-    <h1 class="text-2xl">Choose Your Move</h1>
+  <n-card>
+    <n-form
+      v-if="!gameStarted"
+      @submit="startGame"
+      class="flex flex-col items-center justify-center gap-2 p-4"
+    >
+      <h1 class="text-2xl mb-3">Choose Your Move</h1>
+      <n-radio-group v-model:value="whichMove" class="flex flex-row gap-4">
+        <n-radio value="1" label="First Move" />
+        <n-radio value="2" label="Second Move" />
+      </n-radio-group>
 
-    <div class="flex flex-row gap-4">
-      <input type="radio" name="move" value="1" v-model="whichMove" />
-      <label for="html">First Move</label>
-    </div>
-    <div class="flex flex-row gap-4">
-      <input type="radio" name="move" value="2" v-model="whichMove" />
-      <label for="html">Second Move</label>
-    </div>
-    <label for="grains">Number of grains on each pot: {{ grainsValue }}</label>
-    <input
-      type="range"
-      id="grains"
-      name="grains"
-      min="2"
-      max="5"
-      :value="grainsValue"
-      @pointermove="grainsValue = $event.target.value"
-    />
-    <input type="submit" value="Start" />
-  </form>
+      <label for="grains">Number of grains on each pot: {{ grainsValue }}</label>
+      <n-space vertical class="w-1/2">
+        <n-slider
+          id="grains"
+          v-model:value="grainsValue"
+          :min="2"
+          :max="5"
+          size="big"
+          @update:value="grainsValue = $event"
+      /></n-space>
+
+      <n-button type="primary" attr-type="submit">Start</n-button>
+    </n-form>
+  </n-card>
+
   <div v-if="gameStarted" class="flex flex-col items-center justify-center gap-4 p-4">
     <div class="flex items-center justify-center">
       <GameBoard />
@@ -35,8 +35,8 @@
         <h1 v-if="isWinner" class="text-3xl mb-4 text-center">You won!</h1>
         <h1 v-else class="text-3xl mb-4 text-center">You lost!</h1>
         <h1 v-if="isDraw" class="text-3xl mb-4 text-center">It's a draw!</h1>
-        <button @click="toMenuRoute">Back to Menu</button>
-        <button>Play Again</button>
+        <n-button @click="toMenuRoute">Back to Menu</n-button>
+        <n-button>Play Again</n-button>
       </div>
     </div>
   </div>
@@ -47,6 +47,8 @@
 
 import GameBoard from '../components/SinglePlayerGameBoard.vue'
 import { useSinglePlayerGameStore } from '../stores/singlePlayerGame'
+import { NCard, NForm, NButton, NRadio, NRadioGroup, NSlider, NSpace } from 'naive-ui'
+
 import { storeToRefs } from 'pinia'
 import { ref, onBeforeMount, computed, watch } from 'vue'
 import router from '../router/index.js'

@@ -9,9 +9,7 @@
     <h1 class="font-bold big text-2xl">Kalah</h1>
   </div>
   <div class="flex flex-col gap-3 items-center justify-center">
-    <n-button class="menu-button" type="tertiary" @click="SinglePlayerRoute"
-      >Single Player</n-button
-    >
+    <n-button class="menu-button" @click="SinglePlayerRoute">Single Player</n-button>
     <n-button v-if="isSignedIn" class="menu-button" @click="lobbyRoute">Online</n-button>
     <n-button @click="showTutorial = true" class="menu-button">Tutorial</n-button>
   </div>
