@@ -18,9 +18,12 @@
   <n-modal v-model:show="showRegisterModal">
     <RegisterModal @signedIn="setSignedIn" @close="showRegisterModal = false" />
   </n-modal>
-
-  <LoginModal v-if="showLoginModal" @signedIn="setSignedIn" @close="showLoginModal = false" />
-  <TutorialModal v-if="showTutorial" @close="showTutorial = false" />
+  <n-modal v-model:show="showLoginModal">
+    <LoginModal @signedIn="setSignedIn" @close="showLoginModal = false" />
+  </n-modal>
+  <n-modal v-model:show="showTutorial">
+    <TutorialModal @close="showTutorial = false" />
+  </n-modal>
 </template>
 
 <script setup>

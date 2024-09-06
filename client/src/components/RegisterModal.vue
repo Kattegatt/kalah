@@ -28,7 +28,7 @@
         />
       </n-form-item>
 
-      <n-button @click="register" :disabled="isButtonDisabled" class="btn">Register</n-button>
+      <n-button @click="register" class="btn">Register</n-button>
       <n-button @click="$emit('close')" class="btn ml-2">Cancel</n-button>
     </n-form>
   </n-card>
@@ -100,20 +100,23 @@ function validatePasswordSame(rule, value) {
 
 const register = async () => {
   console.log(formValue.value.password)
-  formRef.value?.validate()
+  formRef.value?.validate((errors) => {
+    if (errors) {
+      console.log('errors', errors)
+      return
+    } else {
+      registerRequest()
+    }
+  })
+}
 
-  // validation of required inputs nedded
-  if (formValue.value.password !== formValue.value.repeatPassword) {
-    console.log('Not same passwords')
-    return
-  }
-
+async function registerRequest() {
   const url = baseUrl + endpoints.createUser
 
   const body = JSON.stringify({
-    username: username.value,
-    email: email.value,
-    password: password.value
+    username: formValue.username,
+    email: formValue.email,
+    password: formValue.password
   })
 
   try {
@@ -132,7 +135,7 @@ const register = async () => {
       emit('close')
     }
   } catch (error) {
-    console.log(error.message)
+    console.log('Error:', error)
   }
 }
 </script>
