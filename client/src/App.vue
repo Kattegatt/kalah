@@ -1,11 +1,11 @@
 <template>
-  <div class="static top-6 w-full z-20">
+  <!-- <div class="static top-6 w-full z-20">
     <div class="pattern">
       <div class="container">
         <div class="pattern-inner"></div>
       </div>
     </div>
-  </div>
+  </div> -->
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
@@ -18,13 +18,13 @@
     <RouterView />
     <!-- Bottom pattern -->
   </main>
-  <div class="absolute bottom-0 w-full z-50">
+  <!-- <div class="absolute bottom-0 w-full z-50">
     <div class="pattern">
       <div class="container">
         <div class="pattern-inner"></div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script setup>

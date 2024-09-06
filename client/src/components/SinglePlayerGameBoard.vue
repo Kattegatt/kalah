@@ -1,5 +1,5 @@
 <template>
-  <fieldset class="board-container">
+  <n-space class="board-container">
     <BoardCell size="big" type="y" :cell="getMainCell('y')" key="mainY"></BoardCell>
     <div class="grid grid-cols-6 gap-4">
       <BoardCell
@@ -24,7 +24,7 @@
     </div>
     <BoardCell size="big" type="x" :cell="getMainCell('x')" key="mainX"></BoardCell>
     <button class="btn mt-4" @click="resetGame">Reset</button>
-  </fieldset>
+  </n-space>
 </template>
 
 <script setup>
@@ -32,6 +32,7 @@ import { computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSinglePlayerGameStore } from '../stores/singlePlayerGame.js'
 import BoardCell from './BoardCell.vue'
+import { NSpace } from 'naive-ui'
 
 const gameStore = useSinglePlayerGameStore()
 const { currentPlayer } = storeToRefs(gameStore)

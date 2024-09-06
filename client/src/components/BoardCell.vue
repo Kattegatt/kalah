@@ -1,16 +1,25 @@
 <template>
-  <button
+  <n-button
+    tertiary
+    round
+    :disabled="cellZero || !clickable"
     :class="[calcStyle, { disabled: cellZero || !clickable, landIndicator: landSignal }]"
-    class="flex items-center justify-center"
     @click="emitClick"
   >
-    {{ cellValue }}
-  </button>
+    <span class="cell-value">{{ cellValue }}</span>
+
+    <div
+      v-for="(dot, index) in dots"
+      :key="index"
+      class="dot"
+      :style="{ top: dot.top, left: dot.left, backgroundColor: dot.color }"
+    ></div>
+  </n-button>
 </template>
 
 <script setup>
-import { ref, computed, watch, toRefs } from 'vue'
-
+import { ref, computed, toRefs, watch, defineEmits } from 'vue'
+import { NButton } from 'naive-ui'
 const props = defineProps({
   cell: {
     type: Object,
@@ -52,23 +61,69 @@ const emit = defineEmits(['move'])
 const emitClick = () => {
   emit('move', cell.value)
 }
+
+// Generate random positions for dots
+const generateDots = (count) => {
+  const dots = []
+  for (let i = 0; i < count; i++) {
+    const red = Math.floor(139 + Math.random() * (205 - 139)) // Random value between 139 and 205
+    const green = Math.floor(69 + Math.random() * (133 - 69)) // Random value between 69 and 133
+    const blue = Math.floor(19 + Math.random() * (69 - 19)) // Random value between 19 and 69
+    dots.push({
+      top: `${20 + Math.random() * 60}%`, // Range from 20% to 80%
+      left: `${20 + Math.random() * 60}%`, // Range from 20% to 80%
+      color: `rgb(${red}, ${green}, ${blue})` // Random brown color
+    })
+  }
+  return dots
+}
+
+// Computed property to generate dots based on cellValue
+const dots = computed(() => generateDots(cellValue.value))
 </script>
 
 <style scoped>
 .small {
-  @apply w-16 h-16;
+  position: relative;
+  width: 100px; /* Adjust size as needed */
+  height: 100px; /* Adjust size as needed */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .big {
-  @apply w-16 h-36;
+  position: relative;
+  width: 100px; /* Adjust size as needed */
+  height: 216px; /* Adjust size as needed */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.land-indicator {
-  border: 2px solid #f39614;
+.cell-value {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  font-size: 16px;
+  color: black;
+  background-color: white;
+  padding: 8px;
+  border-radius: 50%;
 }
 
+.dot {
+  position: absolute;
+  width: 5px;
+  height: 15px;
+  border-radius: 50%;
+}
 .disabled {
-  pointer-events: none;
-  border: none;
+  cursor: default;
+  opacity: 0.5;
+}
+.landIndicator {
+  background-color: #78ea7c;
 }
 </style>
