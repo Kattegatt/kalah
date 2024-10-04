@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref, computed, toRefs, watch, defineEmits } from 'vue'
+import { ref, computed, toRefs, watch } from 'vue'
 import { NButton } from 'naive-ui'
 const props = defineProps({
   cell: {

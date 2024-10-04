@@ -14,39 +14,50 @@ const initializeWebsockets = (server) => {
 
   io.on("connection", (socket) => {
     // Create Game
-    socket.on("createGame", async () => {
+    socket.on("createGame", async (grains) => {
       const dbGame = await GameService.create();
       const gameId = dbGame._id.toString();
-      const game = new Game(gameId);
+      const game = new Game(gameId, grains);
+
       games.push(game);
 
       socket.emit("createdGame", gameId);
     });
 
-    socket.on("joinGame", (gameId) => {
+    socket.on("joinGame", (gameId, isFirstMove) => {
       const game = games.find((game) => game.id === gameId);
 
       const players = io.sockets.adapter.rooms.get(gameId);
+      console.log("players", players);
       if (!players) {
         socket.join(gameId);
         console.log(`socket ${socket.id} joined game ${gameId}`);
         game.addPlayer(socket.id);
+        if (isFirstMove) game.switchPlayer(socket.id);
         io.to(gameId).emit("newPlayer", { playerId: socket.id });
       } else {
         switch (players.size) {
           case 1:
             socket.join(gameId);
-            game.addPlayer(socket.id);
-            game.switchPlayer(game.getPlayersArray()[0]);
+            try {
+              game.addPlayer(socket.id);
 
-            io.to(gameId).emit("newPlayer", { playerId: socket.id });
-            io.to(gameId).emit("startGame", gameId);
-            io.to(gameId).emit("currentPlayer", {
-              playerId: game.getCurrentPlayer(),
-            });
-            break;
+              io.to(gameId).emit("newPlayer", {
+                playerId: socket.id,
+              });
+              io.to(gameId).emit("startGame", gameId);
+              io.to(gameId).emit("currentPlayer", {
+                playerId: game.getCurrentPlayer(),
+              });
+              break;
+            } catch (error) {
+              console.error(error);
+              io.to(socket.id).emit("error", error);
+            }
+
           case 2:
-            throw new Error("More than 2 players in the room");
+            console.error("More than 2 players in the room");
+          // throw new Error("More than 2 players in the room");
         }
       }
     });

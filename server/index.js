@@ -12,7 +12,7 @@ import initializeWebsockets from "./websockets.js";
 dotenv.config();
 
 const DB_URL = `mongodb+srv://admin:${process.env.DB_PASS}@cluster0.vuaacml.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`;
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT;
 
 const app = express();
 

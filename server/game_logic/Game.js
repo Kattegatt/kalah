@@ -1,23 +1,23 @@
 class Game {
-  constructor(id, gameState) {
+  constructor(id, gameState, grains = 3, first) {
     this.isActive = false;
     this.id = id;
     this.currentPlayer = null;
     this.players = new Set();
     this.gameState = gameState || [
-      { x1: 2 },
-      { x2: 2 },
-      { x3: 2 },
-      { x4: 2 },
-      { x5: 2 },
-      { x6: 2 },
+      { x1: grains },
+      { x2: grains },
+      { x3: grains },
+      { x4: grains },
+      { x5: grains },
+      { x6: grains },
       { x7: 0 },
-      { y1: 2 },
-      { y2: 2 },
-      { y3: 2 },
-      { y4: 2 },
-      { y5: 2 },
-      { y6: 2 },
+      { y1: grains },
+      { y2: grains },
+      { y3: grains },
+      { y4: grains },
+      { y5: grains },
+      { y6: grains },
       { y7: 0 },
     ];
   }
@@ -35,8 +35,10 @@ class Game {
   }
 
   addPlayer(socketId) {
-    if (this.players.size >= 2) {
-      throw new Error("There are already 2 players in the game");
+    if (this.players.has(socketId)) {
+      console.error("Player already in the game");
+    } else if (this.players.size >= 2) {
+      console.error("There are already 2 players in the game");
     } else {
       this.players.add(socketId);
     }
@@ -84,7 +86,7 @@ class Game {
         if (cellKey == "x7" || cellKey == "y7") {
           extraTurn = true;
         } else {
-          newGameState = await this.handleCapture(
+          newGameState = await this.#handleCapture(
             newGameState,
             cellKey,
             storeKey
@@ -101,7 +103,7 @@ class Game {
     // return { newGameState, extraTurn };
   }
 
-  async handleCapture(state, landedCellKey, storeKey) {
+  async #handleCapture(state, landedCellKey, storeKey) {
     /* 
     if your grain lands on empty cell you claiming
     take opponent's grains from opposite cell
@@ -151,23 +153,14 @@ class Game {
       this.currentPlayer = playerId;
     }
 
-    // Дополнительная проверка, если currentPlayer не установлен или установлен неправильно
     if (!this.currentPlayer || !this.players.has(this.currentPlayer)) {
       throw new Error("Invalid current player");
     }
   }
 
-  isGameOver() {
-    const playerXCells = this.gameState.filter(
-      (cell) =>
-        Object.keys(cell)[0].includes("x") &&
-        !Object.keys(cell)[0].includes("7")
-    );
-    const playerYCells = this.gameState.filter(
-      (cell) =>
-        Object.keys(cell)[0].includes("y") &&
-        !Object.keys(cell)[0].includes("7")
-    );
+  async isGameOver() {
+    const playerXCells = await this.#getCells("x");
+    const playerYCells = await this.#getCells("y");
 
     const playerXEmpty = playerXCells.every(
       (cell) => Object.values(cell)[0] === 0
@@ -176,7 +169,47 @@ class Game {
       (cell) => Object.values(cell)[0] === 0
     );
 
+    if (playerXEmpty) {
+      this.#collectLeftGrains("y");
+    } else if (playerYEmpty) {
+      this.#collectLeftGrains("x");
+    }
+
     return playerXEmpty || playerYEmpty;
+  }
+
+  async #collectLeftGrains(side) {
+    const playerCells = await this.#getCells(side);
+    const playerStoreKey = side === "x" ? "x7" : "y7";
+    const playerStoreIndex = this.#getCellIndex(playerStoreKey);
+
+    const sum = playerCells.reduce(
+      (acc, cell) => acc + Object.values(cell)[0],
+      0
+    );
+
+    this.gameState[playerStoreIndex] = { [playerStoreKey]: sum };
+
+    // set every cell to 0
+    playerCells.forEach((cell) => {
+      const cellKey = Object.keys(cell)[0];
+      const cellIndex = this.#getCellIndex(cellKey);
+      this.gameState[cellIndex] = { [cellKey]: 0 };
+    });
+  }
+
+  async #getCells(side) {
+    return this.gameState.filter(
+      (cell) =>
+        Object.keys(cell)[0].includes(side) &&
+        !Object.keys(cell)[0].includes("7")
+    );
+  }
+
+  async #getCellIndex(cellKey) {
+    return this.gameState.findIndex((cell) =>
+      Object.keys(cell)[0].includes(cellKey)
+    );
   }
 
   _opposites = {

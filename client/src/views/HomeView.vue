@@ -10,9 +10,9 @@
       <h1 class="font-bold big text-2xl">Kalah</h1>
     </div>
     <div class="flex flex-col gap-3 items-center justify-center">
-      <n-button class="menu-button" @click="SinglePlayerRoute">Single Player</n-button>
-      <n-button v-if="isSignedIn" class="menu-button" @click="lobbyRoute">Online</n-button>
-      <n-button @click="showTutorial = true" class="menu-button">Tutorial</n-button>
+      <n-button class="wide-button" @click="SinglePlayerRoute">Single Player</n-button>
+      <n-button v-if="isSignedIn" class="wide-button" @click="lobbyRoute">Online</n-button>
+      <n-button @click="showTutorial = true" class="wide-button">Tutorial</n-button>
     </div>
     <n-modal v-model:show="showRegisterModal">
       <RegisterModal @signedIn="setSignedIn" @close="showRegisterModal = false" />
@@ -61,7 +61,7 @@ const showTutorial = ref(false)
 .btn {
   @apply py-2 px-4;
 }
-.menu-button {
+.wide-button {
   width: 12rem;
   height: 3rem;
   @apply py-2 px-4;

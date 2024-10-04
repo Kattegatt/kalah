@@ -19,7 +19,9 @@ class GameController {
   }
   async getAllByUserId(req, res) {
     try {
-      const games = await GameService.getAllByUserId(req.params.userId);
+      const userId = req.params.userId || req.user._id;
+      if (!userId) throw new Error("userId not provided");
+      const games = await GameService.getAllByUserId(userId);
       res.json(games);
     } catch (error) {
       res.status(500).json(error.message);
@@ -42,6 +44,16 @@ class GameController {
       res.status(500).json(error.message);
     }
   }
+
+  async patch(req, res) {
+    try {
+      const updatedGame = await GameService.patch(req.params.id, req.body);
+      res.json(updatedGame);
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  }
+
   async delete(req, res) {
     try {
       const deletedGame = await GameService.delete(req.params.id);

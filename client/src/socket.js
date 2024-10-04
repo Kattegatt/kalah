@@ -12,7 +12,7 @@ export const socketState = reactive({
   extraTurn: false
 })
 
-const URL = 'http://localhost:5050'
+const URL = 'http://localhost:5000'
 export const socket = io(URL)
 
 export const initializeSocket = () => {
@@ -32,19 +32,27 @@ export const initializeSocket = () => {
 
   socket.on('startGame', (id) => {
     console.log('GAME STARTED')
+
     router.push({ path: '/game', query: { id } })
   })
 
   socket.on('currentPlayer', ({ playerId }) => {
-    console.log('SOCEKT on currentPlayer id: ', playerId)
     if (playerId === socket.id) playerStore.setTurnTrue()
+  })
+
+  socket.on('error', (error) => {
+    console.log(error)
   })
 }
 
-export const joinGame = (gameId) => {
-  socket.emit('joinGame', gameId)
+export const joinGame = (gameId, isFirstMove) => {
+  socket.emit('joinGame', { gameId, isFirstMove })
 }
 
-export const createGame = () => {
-  socket.emit('createGame')
+export const createGame = (grains) => {
+  socket.emit('createGame', grains)
+}
+
+export const deleteGame = () => {
+  socket.emit('deleteGame')
 }

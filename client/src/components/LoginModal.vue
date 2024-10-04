@@ -74,10 +74,10 @@ const rules = {
 
 async function loginRequest() {
   const url = baseUrl + endpoints.login
-
+  console.log(formValue.value)
   const body = JSON.stringify({
-    email: formValue.email,
-    password: formValue.password
+    email: formValue.value.email,
+    password: formValue.value.password
   })
 
   try {

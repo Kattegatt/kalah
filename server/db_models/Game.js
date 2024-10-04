@@ -53,7 +53,7 @@ const gameSchema = mongoose.Schema({
     default: "waiting",
   },
   gameState: { type: [gameStateSchema], default: gameStateDefault },
-  winner: { type: String },
+  winner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date },
   finishedAt: { type: Date },
