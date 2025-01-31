@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  title: Kalah Game API
+  description: Managing Kalah game sessions
+  version: 1.0.0
+servers:
+  - url: http://localhost:5050
+paths:
+  /games:
+    post:
+      summary: Create a new game
+      responses:
+        '201':
+          description: Game created successfully
+        '400':
+          description: Invalid request data
+        '500':
+          description: Internal server error
+    get:
+      summary: Get all games
+      responses:
+        '200':
+          description: List of games
+        '500':
+          description: Internal server error
+  /games/filter/{userId}:
+    get:
+      summary: Get all games for a specific user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of games for the user
+        '400':
+          description: Invalid user ID format
+        '404':
+          description: Games not found
+        '500':
+          description: Internal server error
+  /games/{id}:
+    get:
+      summary: Get a single game by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Game details
+        '400':
+          description: Invalid game ID format
+        '404':
+          description: Game not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update a game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: ID of the game to update
+                player1:
+                  type: string
+                  description: ID of player 1
+                player2:
+                  type: string
+                  description: ID of player 2
+                status:
+                  type: string
+                  enum: [waiting, in-progress, finished]
+                  description: Current status of the game
+                gameState:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        enum: [x1, x2, x3, x4, x5, x6, x7, y1, y2, y3, y4, y5, y6, y7]
+                        description: The key of the game state cell
+                      value:
+                        type: integer
+                        description: The number of stones in the cell
+                winner:
+                  type: string
+                  description: ID of the winner
+                createdAt:
+                  type: string
+                  format: date-time
+                  description: Timestamp when the game was created
+                updatedAt:
+                  type: string
+                  format: date-time
+                  description: Timestamp when the game was last updated
+                finishedAt:
+                  type: string
+                  format: date-time
+                  description: Timestamp when the game was finished
+      responses:
+        '200':
+          description: Game updated successfully
+        '400':
+          description: Invalid request data
+        '404':
+          description: Game not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete a game
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Game deleted successfully
+        '400':
+          description: Invalid game ID format
+        '404':
+          description: Game not found
+        '500':
+          description: Internal server error
